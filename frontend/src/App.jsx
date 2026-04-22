@@ -4,23 +4,23 @@ import socket from "./socket";
 function App() {
 
   useEffect(() => {
-    socket.on("connect", () => {
+  const handleConnect = () => {
     console.log("Connected:", socket.id);
-  });
+    socket.emit("sendMessage", {
+      text: "Hello from React",
+    });
+  };
 
-  // Receive message
-  socket.on("receiveMessage", (data) => {
+  const handleReceive = (data) => {
     console.log("Received:", data);
-  });
+  };
 
-  // Send test message
-  socket.emit("sendMessage", {
-    text: "Hello from React",
-  });
+  socket.on("connect", handleConnect);
+  socket.on("receiveMessage", handleReceive);
 
   return () => {
-    socket.off("connect");
-    socket.off("receiveMessage");
+    socket.off("connect", handleConnect);
+    socket.off("receiveMessage", handleReceive);
   };
 }, []);
   

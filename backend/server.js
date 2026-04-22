@@ -1,57 +1,84 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
 import { createServer } from "http";
 import { Server } from "socket.io";
 
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/user.routes.js";
 
+// Config
 dotenv.config();
 
+// App & Server
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, { 
-    cors: {
-        origin: "http://localhost:5173",
-        credentials: true
-    },
- });
 
+// Socket.IO setup
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173",
+    credentials: true,
+  },
+});
+
+// Database
 connectDB();
 
+// Middlewares
 app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
+  origin: "http://localhost:5173",
+  credentials: true,
 }));
 app.use(express.json());
 
+// Routes
 app.use("/api/users", userRoutes);
 
-const port = process.env.PORT || 5000;
+// Socket Logic 
+const onlineUsers = new Map();
 
-app.get("/", (req, res) => {
-    res.send("Hello World!");
-})
-
-//when a client connects to the server via Socket.IO
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  socket.on("sendMessage", (data) => {
-    console.log("Received message:", data);
+  // Identify user
+  socket.on("identifyUser", (userId) => {
+    onlineUsers.set(userId, socket.id);
+    console.log("User mapped:", userId, socket.id);
+  });
 
-    //send message to all clients
-    io.emit("receiveMessage", data);
-})
+  // Private messaging
+  socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+    const receiverSocketId = onlineUsers.get(receiverId);
 
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("receiveMessage", {
+        senderId,
+        text,
+      });
+    }
+  });
+
+  // Disconnect cleanup
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
+
+    for (let [userId, socketId] of onlineUsers.entries()) {
+      if (socketId === socket.id) {
+        onlineUsers.delete(userId);
+        break;
+      }
+    }
   });
 });
 
-httpServer.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-})
+// Default Route
+app.get("/", (req, res) => {
+  res.send("API running...");
+});
 
+// Start Server
+const port = process.env.PORT || 5000;
+httpServer.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
