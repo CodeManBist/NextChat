@@ -5,7 +5,11 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 
 import connectDB from "./config/db.js";
+
+import Message from "./models/message.model.js";
+
 import userRoutes from "./routes/user.routes.js";
+import messageRoutes from "./routes/message.routes.js";
 
 // Config
 dotenv.config();
@@ -34,6 +38,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/messages", messageRoutes);
 
 // Socket Logic 
 const onlineUsers = new Map();
@@ -48,14 +53,23 @@ io.on("connection", (socket) => {
   });
 
   // Private messaging
-  socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-    const receiverSocketId = onlineUsers.get(receiverId);
-
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("receiveMessage", {
+  socket.on("sendMessage", async ({ senderId, receiverId, text }) => {
+    try {
+      const newMessage = await Message.create({
         senderId,
+        receiverId,
         text,
       });
+
+      console.log("Message saved:", newMessage);
+
+      const receiverSocketId = onlineUsers.get(receiverId);
+
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("receiveMessage", newMessage);
+      }
+    } catch (error) {
+      console.error("Error saving message:", error);
     }
   });
 
