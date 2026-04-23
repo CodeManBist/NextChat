@@ -3,10 +3,15 @@ import socket from "./socket";
 
 function App() {
 
+  const user = { _id: "user1" };
+
   useEffect(() => {
   const handleConnect = () => {
     console.log("Connected:", socket.id);
+    socket.emit("identifyUser", user._id);
     socket.emit("sendMessage", {
+      senderId: user._id,
+      receiverId: "user2",
       text: "Hello from React",
     });
   };
