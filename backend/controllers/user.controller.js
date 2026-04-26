@@ -2,6 +2,17 @@ import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
 
+//Get All Users 
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching users" });
+  }
+}
+
 // Register Controller
 export const registerUser = async (req, res) => {
   try {
