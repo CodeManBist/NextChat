@@ -1,36 +1,21 @@
-import React, { useEffect } from 'react';
-import socket from "./socket";
+import React from 'react';
+import { Routes, Route } from "react-router-dom";
+import ChatWindow from "./pages/Chat";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
+
 
 function App() {
 
-  const user = { _id: "user1" };
-
-  useEffect(() => {
-  const handleConnect = () => {
-    console.log("Connected:", socket.id);
-    socket.emit("identifyUser", user._id);
-    socket.emit("sendMessage", {
-      senderId: user._id,
-      receiverId: "user2",
-      text: "Hello from React",
-    });
-  };
-
-  const handleReceive = (data) => {
-    console.log("Received:", data);
-  };
-
-  socket.on("connect", handleConnect);
-  socket.on("receiveMessage", handleReceive);
-
-  return () => {
-    socket.off("connect", handleConnect);
-    socket.off("receiveMessage", handleReceive);
-  };
-}, []);
-  
   return (
-    <h1>Socket Test</h1>
+    <Routes>
+      <Route path="/" element={<PublicRoute><Login /></PublicRoute>} />
+      <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+      <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+      <Route path="/chat" element={<ProtectedRoute><ChatWindow /></ProtectedRoute>} />
+    </Routes>
   );
 }
 
