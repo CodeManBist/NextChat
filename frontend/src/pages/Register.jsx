@@ -23,7 +23,8 @@ const Register = () => {
 
       if(response.status === 201) {
         localStorage.setItem("token", data.token);
-
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("username", data.username);
         navigate("/chat");
       } else {
         console.log(data.message);

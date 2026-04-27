@@ -21,6 +21,8 @@ const Login = () => {
 
       if (response.ok && data.token) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("username", data.username);
         navigate("/chat");
       } else {
         console.log(data.message || "Login failed");

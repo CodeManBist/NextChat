@@ -49,39 +49,44 @@ io.on("connection", (socket) => {
   // Identify user
   socket.on("identifyUser", (userId) => {
     onlineUsers.set(userId, socket.id);
-    console.log("User mapped:", userId, socket.id);
+    socket.userId = userId;
+
+    io.emit("onlineUsers", Array.from(onlineUsers.keys()));
   });
 
-  // Private messaging
+  // Send message
   socket.on("sendMessage", async ({ senderId, receiverId, text }) => {
     try {
+      if (!senderId || !receiverId || !text) return;
+
       const newMessage = await Message.create({
         senderId,
         receiverId,
         text,
       });
 
-      console.log("Message saved:", newMessage);
-
       const receiverSocketId = onlineUsers.get(receiverId);
 
+      // Send to receiver
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("receiveMessage", newMessage);
       }
+
+      // Send back to sender
+      socket.emit("receiveMessage", newMessage);
+
     } catch (error) {
       console.error("Error saving message:", error);
     }
   });
 
-  // Disconnect cleanup
+  // Disconnect
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
 
-    for (let [userId, socketId] of onlineUsers.entries()) {
-      if (socketId === socket.id) {
-        onlineUsers.delete(userId);
-        break;
-      }
+    if (socket.userId) {
+      onlineUsers.delete(socket.userId);
+      io.emit("onlineUsers", Array.from(onlineUsers.keys()));
     }
   });
 });
