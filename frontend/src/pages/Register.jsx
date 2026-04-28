@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import AuthCard from "../components/auth/AuthCard";
+import InputField from "../components/auth/InputField";
+import PasswordInput from "../components/auth/PasswordInput";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -10,55 +14,80 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/register", {
-        method: "POST",
-        headers: {  "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/users/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            email,
+            password,
+          }),
+        }
+      );
 
       const data = await response.json();
 
-      if(response.status === 201) {
+      if (response.status === 201) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("username", data.username);
+
         navigate("/chat");
       } else {
         console.log(data.message);
       }
-      
+
     } catch (error) {
       console.error("Registration error:", error);
     }
   };
 
   return (
-    <div>
-      <h1>Register</h1>
-      <form onSubmit={handleRegister}>
-        <input 
-        value={username}
-        onChange={(e) => setUsername(e.target.value)} 
-        placeholder="Username"
-        />
-        <input 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-        />
-        <input 
-          type="password"
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-        />
-        <button type='submit'>Register</button> 
-      </form>
-    </div>
-  )
-}
+    <AuthCard
+      title="Create Account"
+      subtitle="Start chatting securely"
+      footerText="Already have an account?"
+      footerLinkText="Login"
+      footerLink="/login"
+    >
+      <form onSubmit={handleRegister} className="space-y-5">
 
-export default Register
+        <InputField
+          label="Username"
+          placeholder="John Doe"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+
+        <InputField
+          label="Email Address"
+          type="email"
+          placeholder="name@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <PasswordInput
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold py-3 rounded-lg transition"
+        >
+          Register →
+        </button>
+
+      </form>
+    </AuthCard>
+  );
+};
+
+export default Register;
