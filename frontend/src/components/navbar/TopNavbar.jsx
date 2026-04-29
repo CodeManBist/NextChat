@@ -1,4 +1,6 @@
 import React from "react";
+import { FiVideo, FiPhone, FiMoreVertical } from 'react-icons/fi';
+import { FaUserCircle } from 'react-icons/fa';
 
 const TopNavbar = () => {
   return (
@@ -13,19 +15,21 @@ const TopNavbar = () => {
       <div className="flex items-center gap-6 text-gray-400">
 
         <button className="hover:text-white">
-          📹
+          <FiVideo className="h-5 w-5" />
         </button>
 
         <button className="hover:text-white">
-          📞
+          <FiPhone className="h-5 w-5" />
         </button>
 
         <button className="hover:text-white">
-          ⋮
+          <FiMoreVertical className="h-5 w-5" />
         </button>
 
         {/* Avatar */}
-        <div className="w-10 h-10 rounded-full bg-orange-400 cursor-pointer"></div>
+        <div className="w-10 h-10 rounded-full bg-orange-400 cursor-pointer flex items-center justify-center overflow-hidden">
+          <FaUserCircle className="h-9 w-9 text-white" />
+        </div>
 
       </div>
 
