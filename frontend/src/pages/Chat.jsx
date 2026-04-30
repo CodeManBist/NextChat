@@ -47,6 +47,34 @@ const Chat = () => {
     setNewMessage("");
   };
 
+  const markConversationSeen = (activeMessages = messages) => {
+    if (!selectedUser || !currentUserId) return;
+
+    const hasUnseenIncoming = activeMessages.some(
+      (msg) =>
+        msg.senderId === selectedUser._id &&
+        msg.receiverId === currentUserId &&
+        !msg.seen
+    );
+
+    if (!hasUnseenIncoming) return;
+
+    socket.emit("markMessagesSeen", {
+      senderId: selectedUser._id,
+      receiverId: currentUserId,
+    });
+
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg.senderId === selectedUser._id &&
+        msg.receiverId === currentUserId &&
+        !msg.seen
+          ? { ...msg, seen: true, seenAt: new Date().toISOString() }
+          : msg
+      )
+    );
+  };
+
   const handleTyping = (text) => {
     if (!selectedUser) return;
 
@@ -81,9 +109,39 @@ const Chat = () => {
           if (message._id && prev.some((msg) => msg._id === message._id)) {
             return prev;
           }
-          return [...prev, message];
+          const nextMessages = [...prev, message];
+
+          if (
+            message.senderId === selectedUser?._id &&
+            message.receiverId === currentUserId
+          ) {
+            socket.emit("markMessagesSeen", {
+              senderId: selectedUser._id,
+              receiverId: currentUserId,
+            });
+
+            return nextMessages.map((msg) =>
+              msg._id === message._id ? { ...msg, seen: true } : msg
+            );
+          }
+
+          return nextMessages;
         });
       }
+    });
+
+    socket.on("messagesSeen", ({ seenBy, senderId, messageIds = [] }) => {
+      if (seenBy !== selectedUser?._id && senderId !== currentUserId) return;
+
+      setMessages((prev) =>
+        prev.map((msg) =>
+          messageIds.includes(msg._id)
+            ? { ...msg, seen: true, seenAt: new Date().toISOString() }
+            : msg.senderId === currentUserId && msg.receiverId === seenBy
+            ? { ...msg, seen: true, seenAt: new Date().toISOString() }
+            : msg
+        )
+      );
     });
 
     socket.on("typing", ({ senderId, receiverId }) => {
@@ -100,6 +158,7 @@ const Chat = () => {
 
     return () => {
       socket.off("receiveMessage");
+      socket.off("messagesSeen");
       socket.off("typing");
       socket.off("stopTyping");
     };
@@ -113,6 +172,10 @@ const Chat = () => {
       setMessages([]);
     }
   }, [selectedUser]);
+
+  useEffect(() => {
+    markConversationSeen();
+  }, [messages, selectedUser, currentUserId]);
 
   const isChatsMenuActive = activeMenu === "chats";
 

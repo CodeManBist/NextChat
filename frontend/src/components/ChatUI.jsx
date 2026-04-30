@@ -1,4 +1,4 @@
-import { BsEmojiSmile, BsPlusLg, BsSendFill } from "react-icons/bs";
+import { BsCheck, BsCheck2All, BsEmojiSmile, BsPlusLg, BsSendFill } from "react-icons/bs";
 import { HiMiniMicrophone } from "react-icons/hi2";
 
 const ChatUI = ({
@@ -17,8 +17,8 @@ const ChatUI = ({
     <div className="h-full w-full bg-[#07141d] overflow-hidden relative flex flex-col">
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-100px] left-[-100px] h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute bottom-[-150px] right-[-100px] h-[500px] w-[500px] rounded-full bg-green-500/10 blur-3xl" />
+        <div className="absolute -top-25 -left-25 h-125 w-125 rounded-full bg-cyan-500/10 blur-3xl" />
+        <div className="absolute -bottom-37.5 -right-25 h-125 w-125 rounded-full bg-green-500/10 blur-3xl" />
 
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-20 left-10 h-40 w-40 rounded-full border border-cyan-400/20" />
@@ -52,12 +52,20 @@ const ChatUI = ({
       {/* Messages */}
       <div className="relative z-10 flex-1 overflow-y-auto px-4 py-6 space-y-5 scrollbar-hide">
         {isEmpty ? (
-          <div className="h-full min-h-[300px] flex items-center justify-center text-[#8EA7A3] text-center px-6">
+          <div className="h-full min-h-75 flex items-center justify-center text-[#8EA7A3] text-center px-6">
             Start chatting with {selectedUser?.username}.
           </div>
         ) : (
           messages.map((msg, index) => {
             const isMe = msg.senderId === currentUserId || msg.sender === "me";
+            const messageTime =
+              msg.time ||
+              (msg.createdAt
+                ? new Date(msg.createdAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "");
             return (
               <div
                 key={msg._id || msg.id || index}
@@ -88,7 +96,18 @@ const ChatUI = ({
                         isMe ? "text-white/70" : "text-gray-400"
                       }`}
                     >
-                      {msg.time || ""}
+                      {isMe ? (
+                        <div className="flex items-center gap-1.5">
+                          <span>{messageTime}</span>
+                          {msg.seen ? (
+                            <BsCheck2All className="text-[#7dd3fc]" size={14} />
+                          ) : (
+                            <BsCheck className="text-white/60" size={14} />
+                          )}
+                        </div>
+                      ) : (
+                        <span>{messageTime}</span>
+                      )}
                     </div>
                   </div>
                 </div>

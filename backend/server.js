@@ -91,6 +91,7 @@ io.on("connection", (socket) => {
         senderId,
         receiverId,
         text,
+        seen: false,
       });
 
       const receiverSocketIds = onlineUsers.get(receiverId);
@@ -107,6 +108,49 @@ io.on("connection", (socket) => {
 
     } catch (error) {
       console.error("Error saving message:", error);
+    }
+  });
+
+  socket.on("markMessagesSeen", async ({ senderId, receiverId }) => {
+    try {
+      if (!senderId || !receiverId) return;
+
+      const unseenMessages = await Message.find({
+        senderId,
+        receiverId,
+        seen: false,
+      }).select("_id");
+
+      const result = await Message.updateMany(
+        {
+          senderId,
+          receiverId,
+          seen: false,
+        },
+        {
+          $set: {
+            seen: true,
+            seenAt: new Date(),
+          },
+        }
+      );
+
+      if (result.modifiedCount > 0 && unseenMessages.length > 0) {
+        const senderSockets = onlineUsers.get(senderId);
+        const seenMessageIds = unseenMessages.map((message) => message._id.toString());
+
+        if (senderSockets && senderSockets.size > 0) {
+          senderSockets.forEach((senderSocketId) => {
+            io.to(senderSocketId).emit("messagesSeen", {
+              seenBy: receiverId,
+              senderId,
+              messageIds: seenMessageIds,
+            });
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error marking messages as seen:", error);
     }
   });
 
