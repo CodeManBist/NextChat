@@ -60,7 +60,7 @@ const ChatsSection = ({ setSelectedUser, selectedUser }) => {
       </div>
 
       {/* Users List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto chat-scrollbar">
 
         {filteredUsers.length > 0 ? (
           filteredUsers.map((user) => (

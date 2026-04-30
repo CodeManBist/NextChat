@@ -52,7 +52,7 @@ const ChatUI = ({
       </div>
 
       {/* Messages */}
-      <div className="relative z-10 flex-1 overflow-y-auto px-4 py-6 space-y-5 scrollbar-hide" ref={chatContainerRef} onScroll={handleScroll}>
+      <div className="relative z-10 flex-1 overflow-y-auto px-4 py-6 space-y-5 chat-scrollbar" ref={chatContainerRef} onScroll={handleScroll}>
         {isEmpty ? (
           <div className="h-full min-h-75 flex items-center justify-center text-[#8EA7A3] text-center px-6">
             Start chatting with {selectedUser?.username}.
