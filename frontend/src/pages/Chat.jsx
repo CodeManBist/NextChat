@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { io } from "socket.io-client";
 import AppLayout from "../components/layout/AppLayout";
-
-const socket = io("http://localhost:5000");
+import socket from "../socket";
 
 const Chat = () => {
   const [users, setUsers] = useState([]);

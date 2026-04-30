@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FiSearch } from "react-icons/fi";
+import { ChatContext } from "../../context/ChatContext";
 
 const ChatsSection = ({ setSelectedUser, selectedUser }) => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
+  const { onlineUsers } = useContext(ChatContext);
 
   useEffect(() => {
     const getAllUsers = async () => {
@@ -78,8 +80,14 @@ const ChatsSection = ({ setSelectedUser, selectedUser }) => {
                   className="w-12 h-12 rounded-full object-cover"
                 />
 
-                {/* Online Dot */}
-                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#0B141A] rounded-full"></span>
+                {/* Online/Offline Dot */}
+                <span
+                  className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-[#0B141A] rounded-full ${
+                    onlineUsers.includes(user._id)
+                      ? "bg-green-500"
+                      : "bg-gray-500"
+                  }`}
+                ></span>
               </div>
 
               {/* User Info */}

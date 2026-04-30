@@ -21,7 +21,7 @@ const httpServer = createServer(app);
 // Socket.IO setup
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
   },
 });
@@ -31,7 +31,7 @@ connectDB();
 
 // Middlewares
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "http://localhost:5174"],
   credentials: true,
 }));
 app.use(express.json());
@@ -41,17 +41,26 @@ app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
 
 // Socket Logic 
+// userId -> Set<socketId> to support multiple tabs/devices per user
 const onlineUsers = new Map();
+
+const emitOnlineUsers = () => {
+  io.emit("onlineUsers", Array.from(onlineUsers.keys()));
+};
 
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
   // Identify user
   socket.on("identifyUser", (userId) => {
-    onlineUsers.set(userId, socket.id);
-    socket.userId = userId;
+    if (!userId) return;
 
-    io.emit("onlineUsers", Array.from(onlineUsers.keys()));
+    socket.userId = userId;
+    const existingSockets = onlineUsers.get(userId) || new Set();
+    existingSockets.add(socket.id);
+    onlineUsers.set(userId, existingSockets);
+
+    emitOnlineUsers();
   });
 
   // Send message
@@ -65,11 +74,13 @@ io.on("connection", (socket) => {
         text,
       });
 
-      const receiverSocketId = onlineUsers.get(receiverId);
+      const receiverSocketIds = onlineUsers.get(receiverId);
 
-      // Send to receiver
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("receiveMessage", newMessage);
+      // Send to all receiver sockets (multiple tabs/devices)
+      if (receiverSocketIds && receiverSocketIds.size > 0) {
+        receiverSocketIds.forEach((receiverSocketId) => {
+          io.to(receiverSocketId).emit("receiveMessage", newMessage);
+        });
       }
 
       // Send back to sender
@@ -85,8 +96,19 @@ io.on("connection", (socket) => {
     console.log("User disconnected:", socket.id);
 
     if (socket.userId) {
-      onlineUsers.delete(socket.userId);
-      io.emit("onlineUsers", Array.from(onlineUsers.keys()));
+      const userSockets = onlineUsers.get(socket.userId);
+
+      if (userSockets) {
+        userSockets.delete(socket.id);
+
+        if (userSockets.size === 0) {
+          onlineUsers.delete(socket.userId);
+        } else {
+          onlineUsers.set(socket.userId, userSockets);
+        }
+
+        emitOnlineUsers();
+      }
     }
   });
 });
