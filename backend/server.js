@@ -21,7 +21,7 @@ const httpServer = createServer(app);
 // Socket.IO setup
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: "http://localhost:5173",
     credentials: true,
   },
 });
@@ -31,7 +31,7 @@ connectDB();
 
 // Middlewares
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174"],
+  origin: "http://localhost:5173",
   credentials: true,
 }));
 app.use(express.json());
@@ -63,6 +63,25 @@ io.on("connection", (socket) => {
     emitOnlineUsers();
   });
 
+  // typing indicators
+  socket.on("typing", ({ senderId, receiverId }) => {
+    const receiverSockets = onlineUsers.get(receiverId);
+    if (!receiverSockets) return;
+
+    receiverSockets.forEach((socketId) => {
+      io.to(socketId).emit("typing", { senderId, receiverId });
+    });
+  });
+
+  socket.on("stopTyping", ({ senderId, receiverId }) => {
+    const receiverSockets = onlineUsers.get(receiverId);
+    if (!receiverSockets) return;
+
+    receiverSockets.forEach((socketId) => {
+      io.to(socketId).emit("stopTyping", { senderId, receiverId });
+    });
+  });
+
   // Send message
   socket.on("sendMessage", async ({ senderId, receiverId, text }) => {
     try {
@@ -76,7 +95,7 @@ io.on("connection", (socket) => {
 
       const receiverSocketIds = onlineUsers.get(receiverId);
 
-      // Send to all receiver sockets (multiple tabs/devices)
+      // Send to all receiver sockets
       if (receiverSocketIds && receiverSocketIds.size > 0) {
         receiverSocketIds.forEach((receiverSocketId) => {
           io.to(receiverSocketId).emit("receiveMessage", newMessage);

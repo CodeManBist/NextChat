@@ -7,9 +7,11 @@ const ChatUI = ({
   newMessage,
   setNewMessage,
   sendMessage,
+  handleTyping,
   currentUserId,
   currentUsername,
   isEmpty,
+  isTyping,
 }) => {
   return (
     <div className="h-full w-full bg-[#07141d] overflow-hidden relative flex flex-col">
@@ -32,6 +34,14 @@ const ChatUI = ({
           <p className="text-xs text-[#8EA7A3]">
             {selectedUser ? "Ready to chat" : ""}
           </p>
+          {isTyping && (
+            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[#18242c] px-3 py-2 shadow-lg border border-white/5">
+              <span className="sr-only">typing</span>
+              <span className="h-2 w-2 rounded-full bg-green-400 animate-bounce [animation-delay:-0.3s]" />
+              <span className="h-2 w-2 rounded-full bg-green-400 animate-bounce [animation-delay:-0.15s]" />
+              <span className="h-2 w-2 rounded-full bg-green-400 animate-bounce" />
+            </div>
+          )}
         </div>
 
         <div className="text-xs text-[#8EA7A3]">
@@ -102,8 +112,12 @@ const ChatUI = ({
               type="text"
               placeholder={`Type a message to ${selectedUser?.username || "user"}`}
               value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
+              onChange={(e) => {
+                setNewMessage(e.target.value);
+                handleTyping?.(e.target.value);
+              }}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              onBlur={() => handleTyping?.("")}
               className="bg-transparent outline-none text-white placeholder:text-gray-500 w-full text-sm"
             />
 

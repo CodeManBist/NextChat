@@ -8,6 +8,7 @@ const Chat = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
   const currentUserId = localStorage.getItem("userId");
   const currentUsername = localStorage.getItem("username");
@@ -38,8 +39,28 @@ const Chat = () => {
 
     // Emit to socket
     socket.emit("sendMessage", messageData);
+    socket.emit("stopTyping", {
+      senderId: currentUserId,
+      receiverId: selectedUser._id,
+    });
 
     setNewMessage("");
+  };
+
+  const handleTyping = (text) => {
+    if (!selectedUser) return;
+
+    if (text.trim()) {
+      socket.emit("typing", {
+        senderId: currentUserId,
+        receiverId: selectedUser._id,
+      });
+    } else {
+      socket.emit("stopTyping", {
+        senderId: currentUserId,
+        receiverId: selectedUser._id,
+      });
+    }
   };
 
   // ================= SOCKET SETUP =================
@@ -65,8 +86,22 @@ const Chat = () => {
       }
     });
 
+    socket.on("typing", ({ senderId, receiverId }) => {
+      if (senderId === selectedUser?._id && receiverId === currentUserId) {
+        setIsTyping(true);
+      }
+    });
+
+    socket.on("stopTyping", ({ senderId, receiverId }) => {
+      if (senderId === selectedUser?._id && receiverId === currentUserId) {
+        setIsTyping(false);
+      }
+    });
+
     return () => {
       socket.off("receiveMessage");
+      socket.off("typing");
+      socket.off("stopTyping");
     };
   }, [selectedUser, currentUserId]);
 
@@ -103,9 +138,11 @@ const Chat = () => {
           newMessage={newMessage}
           setNewMessage={setNewMessage}
           sendMessage={sendMessage}
+          handleTyping={handleTyping}
           currentUserId={currentUserId}
           currentUsername={currentUsername}
           isEmpty={messages.length === 0}
+          isTyping={isTyping}
         />
       )}
     </AppLayout>
