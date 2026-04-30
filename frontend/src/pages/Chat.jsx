@@ -1,29 +1,71 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import AppLayout from "../components/layout/AppLayout";
 import socket from "../socket";
 import ChatUI from "../components/ChatUI";
 
 const Chat = () => {
+  const chatContainerRef = useRef(null);
+  const previousScrollHeightRef = useRef(0);
+  const pendingScrollBehaviorRef = useRef(null);
+
   const [activeMenu, setActiveMenu] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const currentUserId = localStorage.getItem("userId");
   const currentUsername = localStorage.getItem("username");
 
+  const handleScroll = () => {
+    if (!chatContainerRef.current || isLoadingMore || !hasMore || !selectedUser) return;
+
+    // reached top
+    if (chatContainerRef.current.scrollTop <= 10) {
+      const nextPage = page + 1;
+      fetchMessages(selectedUser._id, nextPage);
+    }
+  };
+
   // ================= FETCH MESSAGES =================
-  const fetchMessages = async (userId) => {
+  const fetchMessages = async (userId, pageNumber = 1) => {
+    if (isLoadingMore || !userId) return;
+
+    if (pageNumber > 1 && !hasMore) return;
+
+    const container = chatContainerRef.current;
+
+    if (pageNumber === 1) {
+      pendingScrollBehaviorRef.current = "bottom";
+    } else if (container) {
+      previousScrollHeightRef.current = container.scrollHeight;
+      pendingScrollBehaviorRef.current = "preserve";
+    }
+
     try {
+      setIsLoadingMore(true);
+
       const response = await fetch(
-        `http://localhost:5000/api/messages/${currentUserId}/${userId}`
+        `http://localhost:5000/api/messages/${currentUserId}/${userId}?page=${pageNumber}&limit=20`
       );
 
       const data = await response.json();
-      setMessages(data);
+
+      setMessages((prev) =>
+        pageNumber === 1 ? data : [...data, ...prev]
+      );
+      setPage(pageNumber);
+
+      if (data.length < 20) {
+        setHasMore(false);
+      }
     } catch (error) {
       console.error("Error fetching messages:", error);
+    } finally {
+      setIsLoadingMore(false);
     }
   };
 
@@ -167,11 +209,43 @@ const Chat = () => {
   // ================= LOAD CHAT WHEN USER SELECTED =================
   useEffect(() => {
     if (selectedUser) {
-      fetchMessages(selectedUser._id);
+      setPage(1);
+      setHasMore(true);
+      setMessages([]);
+      fetchMessages(selectedUser._id, 1);
     } else {
       setMessages([]);
+      setPage(1);
+      setHasMore(true);
+      pendingScrollBehaviorRef.current = null;
+      previousScrollHeightRef.current = 0;
     }
   }, [selectedUser]);
+
+  useEffect(() => {
+    const container = chatContainerRef.current;
+
+    if (!container) return;
+
+    if (pendingScrollBehaviorRef.current === "bottom" && messages.length > 0) {
+      requestAnimationFrame(() => {
+        container.scrollTop = container.scrollHeight;
+        pendingScrollBehaviorRef.current = null;
+      });
+      return;
+    }
+
+    if (
+      pendingScrollBehaviorRef.current === "preserve" &&
+      previousScrollHeightRef.current > 0 &&
+      !isLoadingMore
+    ) {
+      const newScrollHeight = container.scrollHeight;
+      container.scrollTop = newScrollHeight - previousScrollHeightRef.current;
+      pendingScrollBehaviorRef.current = null;
+      previousScrollHeightRef.current = 0;
+    }
+  }, [messages, isLoadingMore, selectedUser]);
 
   useEffect(() => {
     markConversationSeen();
@@ -206,6 +280,8 @@ const Chat = () => {
           currentUsername={currentUsername}
           isEmpty={messages.length === 0}
           isTyping={isTyping}
+          chatContainerRef={chatContainerRef}
+          handleScroll={handleScroll}
         />
       )}
     </AppLayout>
