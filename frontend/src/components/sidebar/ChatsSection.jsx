@@ -7,6 +7,8 @@ const ChatsSection = ({ setSelectedUser, selectedUser }) => {
   const [search, setSearch] = useState("");
   const { onlineUsers } = useContext(ChatContext);
 
+  const currentUserId = localStorage.getItem("userId");
+
   useEffect(() => {
     const getAllUsers = async () => {
       try {
@@ -93,9 +95,10 @@ const ChatsSection = ({ setSelectedUser, selectedUser }) => {
               {/* User Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-medium truncate">
-                    {user.username}
-                  </h2>
+
+                    <h2 className="font-medium truncate">
+                      {currentUserId === user._id ? "You": user.username}
+                    </h2>
 
                   <span className="text-xs text-gray-400">
                     12:45 PM

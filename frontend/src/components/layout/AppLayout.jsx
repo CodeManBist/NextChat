@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import TopNavbar from "../navbar/TopNavbar";
 import SidebarLayout from "./SidebarLayout";
 
-const AppLayout = ({ children }) => {
-  const [activeMenu, setActiveMenu] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null);
-
+const AppLayout = ({
+  children,
+  activeMenu,
+  setActiveMenu,
+  selectedUser,
+  setSelectedUser,
+}) => {
   return (
     <div className="h-screen bg-[#07111B] flex flex-col overflow-hidden">
 
