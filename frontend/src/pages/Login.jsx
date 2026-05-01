@@ -36,7 +36,7 @@ const Login = () => {
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("username", data.username);
 
-        navigate("/chat");
+        navigate("/");
       } else {
         console.log(data.message || "Login failed");
       }
