@@ -21,6 +21,15 @@ const Chat = () => {
   const currentUserId = localStorage.getItem("userId");
   const currentUsername = localStorage.getItem("username");
 
+  const scrollToBottom = () => {
+    const container = chatContainerRef.current;
+    if (!container) return;
+
+    requestAnimationFrame(() => {
+      container.scrollTop = container.scrollHeight;
+    });
+  };
+
   const handleScroll = () => {
     if (!chatContainerRef.current || isLoadingMore || !hasMore || !selectedUser) return;
 
@@ -102,6 +111,7 @@ const Chat = () => {
     });
 
     setNewMessage("");
+    scrollToBottom();
   };
 
   const markConversationSeen = (activeMessages = messages) => {
@@ -184,6 +194,8 @@ const Chat = () => {
 
           return nextMessages;
         });
+
+        scrollToBottom();
       }
     });
 
@@ -267,6 +279,16 @@ const Chat = () => {
   }, [messages, selectedUser, currentUserId]);
 
   const isChatsMenuActive = activeMenu === "chats";
+  const panelMessages = {
+    chats: "Select a user to start chatting.",
+    status: "Status section selected. Add status updates here.",
+    channels: "Channels section selected. Join or create channels here.",
+    settings: "Settings section selected. Manage preferences here.",
+    default: "Select a section from the sidebar to continue.",
+  };
+
+  const currentPanelMessage =
+    panelMessages[activeMenu] || panelMessages.default;
 
   return (
     <AppLayout
@@ -278,13 +300,13 @@ const Chat = () => {
       {!isChatsMenuActive ? (
         <div className="h-full w-full flex flex-col items-center justify-center text-[#8EA7A3] text-center px-4 sm:px-6">
           <p className="text-base sm:text-lg">
-            Select <span className="mx-1 text-green-400 font-semibold">Chats</span> from the sidebar to start.
+            {currentPanelMessage}
           </p>
         </div>
       ) : !selectedUser ? (
         <div className="h-full w-full flex flex-col items-center justify-center text-[#8EA7A3] text-center px-4 sm:px-6">
           <p className="text-base sm:text-lg">
-            Select a user to start chatting.
+            {currentPanelMessage}
           </p>
         </div>
       ) : (
