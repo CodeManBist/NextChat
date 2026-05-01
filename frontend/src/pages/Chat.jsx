@@ -3,6 +3,8 @@ import AppLayout from "../components/layout/AppLayout";
 import ChatHeader from "../components/ChatHeader";
 import socket from "../socket";
 import ChatUI from "../components/ChatUI";
+import { FiMessageCircle, FiSettings, FiUsers } from "react-icons/fi";
+import { MdOutlineRadioButtonChecked } from "react-icons/md";
 
 const Chat = () => {
   const chatContainerRef = useRef(null);
@@ -287,8 +289,67 @@ const Chat = () => {
     default: "Select a section from the sidebar to continue.",
   };
 
+  const panelVisuals = {
+    chats: {
+      icon: FiMessageCircle,
+      title: "Chats",
+      helper: "Your recent contacts are listed on the left.",
+    },
+    status: {
+      icon: MdOutlineRadioButtonChecked,
+      title: "Status",
+      helper: "Share quick updates and view status activity.",
+    },
+    channels: {
+      icon: FiUsers,
+      title: "Channels",
+      helper: "Create or join channels to chat with groups.",
+    },
+    settings: {
+      icon: FiSettings,
+      title: "Settings",
+      helper: "Manage theme, privacy, and chat preferences.",
+    },
+    default: {
+      icon: FiMessageCircle,
+      title: "NextChat",
+      helper: "Use the left panel to continue.",
+    },
+  };
+
   const currentPanelMessage =
     panelMessages[activeMenu] || panelMessages.default;
+  const currentPanelVisual =
+    panelVisuals[activeMenu] || panelVisuals.default;
+  const PanelIcon = currentPanelVisual.icon;
+
+  const showChatsPrompt = isChatsMenuActive && !selectedUser;
+
+  const EmptyStatePanel = ({ message }) => (
+    <div className="h-full w-full relative overflow-hidden bg-[#07111B] flex items-center justify-center px-4 sm:px-6">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 h-[26rem] w-[26rem] rounded-full bg-sky-500/10 blur-3xl" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-xl rounded-2xl border border-[#1A3A5C] bg-[#0F1E35]/75 backdrop-blur-md p-6 sm:p-8 text-center shadow-2xl">
+        <div className="mx-auto mb-4 h-14 w-14 rounded-2xl bg-[#1A3A5C]/70 border border-[#2A517F] flex items-center justify-center">
+          <PanelIcon className="h-7 w-7 text-blue-300" />
+        </div>
+        <p className="text-blue-300 text-sm font-semibold tracking-wide uppercase mb-2">
+          {currentPanelVisual.title}
+        </p>
+        <p className="text-base sm:text-lg text-[#B7C8D9] font-medium">
+          {message}
+        </p>
+        <p className="mt-2 text-sm text-[#8EA7A3]">
+          {showChatsPrompt
+            ? panelVisuals.chats.helper
+            : currentPanelVisual.helper}
+        </p>
+      </div>
+    </div>
+  );
 
   return (
     <AppLayout
@@ -298,17 +359,9 @@ const Chat = () => {
       setSelectedUser={setSelectedUser}
     >
       {!isChatsMenuActive ? (
-        <div className="h-full w-full flex flex-col items-center justify-center text-[#8EA7A3] text-center px-4 sm:px-6">
-          <p className="text-base sm:text-lg">
-            {currentPanelMessage}
-          </p>
-        </div>
+        <EmptyStatePanel message={currentPanelMessage} />
       ) : !selectedUser ? (
-        <div className="h-full w-full flex flex-col items-center justify-center text-[#8EA7A3] text-center px-4 sm:px-6">
-          <p className="text-base sm:text-lg">
-            {currentPanelMessage}
-          </p>
-        </div>
+        <EmptyStatePanel message={currentPanelMessage} />
       ) : (
         <div className="h-full w-full flex flex-col overflow-hidden">
           {/* Chat Header - Shows when user is selected */}

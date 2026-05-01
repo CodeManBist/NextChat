@@ -8,7 +8,7 @@ const ChatHeader = ({ selectedUser, currentUsername, isTyping, onBack }) => {
   if (!selectedUser) return null;
 
   return (
-    <div className="h-16 sm:h-20 bg-[#0F1E35] border-b border-[#1A3A5C] px-3 sm:px-5 py-2 sm:py-4 flex items-center justify-between flex-shrink-0">
+    <div className="h-16 sm:h-20 bg-[#0D2038] border-b border-[#1A3A5C] px-3 sm:px-5 py-2 sm:py-4 flex items-center justify-between flex-shrink-0">
       
       {/* LEFT SIDE - User Info */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -27,7 +27,7 @@ const ChatHeader = ({ selectedUser, currentUsername, isTyping, onBack }) => {
             alt={selectedUser.username}
             className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
           />
-          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 border-2 border-[#0F1E35] rounded-full"></span>
+          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 border-2 border-[#0D2038] rounded-full"></span>
         </div>
 
         {/* User Details */}
@@ -68,7 +68,7 @@ const ChatHeader = ({ selectedUser, currentUsername, isTyping, onBack }) => {
 
           {/* Dropdown Menu */}
           {showMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-[#0F1E35] border border-[#1A3A5C] rounded-lg shadow-lg z-50">
+            <div className="absolute right-0 mt-2 w-48 bg-[#0D2038] border border-[#1A3A5C] rounded-lg shadow-lg z-50">
               <button className="w-full text-left px-4 py-2.5 text-gray-300 hover:bg-[#1a3a5c] text-sm first:rounded-t-lg transition flex items-center gap-2">
                 <FaUserCircle className="w-4 h-4" />
                 <span>Profile</span>

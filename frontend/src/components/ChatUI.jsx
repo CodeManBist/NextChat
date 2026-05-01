@@ -1,5 +1,4 @@
 import { BsCheck, BsCheck2All, BsEmojiSmile, BsPlusLg, BsSendFill } from "react-icons/bs";
-import { HiMiniMicrophone } from "react-icons/hi2";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
 
@@ -18,16 +17,16 @@ const ChatUI = ({
   handleScroll,
 }) => {
   return (
-    <div className="h-full w-full bg-[#07141d] overflow-hidden relative flex flex-col">
+    <div className="h-full w-full bg-[#07111B] overflow-hidden relative flex flex-col">
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-25 -left-25 h-125 w-125 rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute -bottom-37.5 -right-25 h-125 w-125 rounded-full bg-green-500/10 blur-3xl" />
+        <div className="absolute -top-25 -left-25 h-125 w-125 rounded-full bg-blue-500/12 blur-3xl" />
+        <div className="absolute -bottom-37.5 -right-25 h-125 w-125 rounded-full bg-sky-500/10 blur-3xl" />
 
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-10 h-40 w-40 rounded-full border border-cyan-400/20" />
-          <div className="absolute bottom-20 right-10 h-72 w-72 rounded-full border border-green-400/10" />
-          <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10" />
+          <div className="absolute top-20 left-10 h-40 w-40 rounded-full border border-blue-400/20" />
+          <div className="absolute bottom-20 right-10 h-72 w-72 rounded-full border border-sky-400/10" />
+          <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full border border-blue-300/10" />
         </div>
       </div>
 
@@ -56,8 +55,8 @@ const ChatUI = ({
                 <div
                   className={`max-w-[75%] sm:max-w-[60%] rounded-2xl overflow-hidden shadow-2xl border border-white/5 ${
                     isMe
-                      ? "bg-[#0f9d7a] text-white rounded-br-md"
-                      : "bg-[#1a2630]/95 text-gray-200 rounded-bl-md"
+                      ? "bg-[#1E5EC7] text-white rounded-br-md"
+                      : "bg-[#13263E]/95 text-gray-200 rounded-bl-md"
                   }`}
                 >
                   {msg.image && (
@@ -100,9 +99,9 @@ const ChatUI = ({
       </div>
 
       {/* Input */}
-      <div className="relative z-10 px-2 sm:px-3 py-2 sm:py-3 bg-[#16232c]/90 border-t border-white/5 backdrop-blur-xl">
+      <div className="relative z-10 px-2 sm:px-3 py-2 sm:py-3 bg-[#0F1E35]/90 border-t border-[#1A3A5C] backdrop-blur-xl">
         <div className="flex items-center gap-2 sm:gap-3">
-          <button type="button" className="text-gray-400 hover:text-white transition flex-shrink-0">
+          <button type="button" className="text-gray-400 hover:text-white transition shrink-0">
             <BsPlusLg size={18} className="sm:w-5 sm:h-5" />
           </button>
 
@@ -121,12 +120,12 @@ const ChatUI = ({
 
           <div className="flex items-center gap-2">
             <button type="button" className="text-gray-400 hover:text-white">
-              <BsPlusLg size={18} />
+              <BsEmojiSmile size={18} />
             </button>
 
             <Button
               size="sm"
-              variant="success"
+              variant="primary"
               onClick={sendMessage}
               disabled={!newMessage.trim()}
             >

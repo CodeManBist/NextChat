@@ -47,7 +47,7 @@ const Sidebar = ({ activeMenu, setActiveMenu, selectedUser, setSelectedUser, onS
             <FiMessageCircle className="text-blue-400 w-6 h-6" />
             <span className="text-white font-semibold text-lg">NextChat</span>
           </button>
-          
+
         </div>
 
         <div className="space-y-2 flex-1">
@@ -60,7 +60,7 @@ const Sidebar = ({ activeMenu, setActiveMenu, selectedUser, setSelectedUser, onS
               className="flex items-center gap-4 px-4 py-3 rounded-xl text-gray-300 hover:bg-[#1a3a5c] cursor-pointer transition"
             >
               {menu.icon}
-              <span className="hidden sm:inline">{menu.label}</span>
+              <span className="inline">{menu.label}</span>
             </div>
           ))}
         </div>
@@ -75,7 +75,8 @@ if (activeMenu === "chats") {
       <div className="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 via-transparent to-transparent opacity-80" />
 
       {/* Header */}
-      <div className="flex items-center gap-3 p-3 sm:p-4 border-b border-[#1A3A5C] bg-[#07111B] sm:bg-transparent">
+      <div className="h-16 sm:h-20 flex items-center px-3 sm:px-5 border-b border-[#1A3A5C] bg-[#0D2038]">
+        <div className="flex items-center gap-3">
         <FiArrowLeft
           size={22}
           className="cursor-pointer text-white flex-shrink-0"
@@ -92,6 +93,7 @@ if (activeMenu === "chats") {
         <h2 className="text-xl sm:text-2xl font-semibold text-blue-400">
           Chats
         </h2>
+        </div>
       </div>
 
       {/* Chats Section */}
