@@ -1,6 +1,8 @@
+import React, { useRef } from "react";
 import { BsCheck, BsCheck2All, BsEmojiSmile, BsPlusLg, BsSendFill } from "react-icons/bs";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
+import socket from "../socket";
 
 const ChatUI = ({
   selectedUser,
@@ -17,8 +19,40 @@ const ChatUI = ({
   handleScroll,
   onlineUsers,
 }) => {
+  const fileInputRef = useRef(null);
+
+  // ✅ File upload handler (no UI change)
+  const handleFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      socket.emit("sendMessage", {
+        senderId: currentUserId,
+        receiverId: selectedUser._id,
+        text: "",
+        fileUrl: data.fileUrl,
+        fileType: data.fileType,
+      });
+
+    } catch (error) {
+      console.error("File upload error:", error);
+    }
+  };
+
   return (
     <div className="h-full w-full bg-[#07111B] overflow-hidden relative flex flex-col">
+
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-25 -left-25 h-125 w-125 rounded-full bg-blue-500/12 blur-3xl" />
@@ -32,7 +66,11 @@ const ChatUI = ({
       </div>
 
       {/* Messages Container */}
-      <div className="relative z-10 flex-1 overflow-y-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-5 chat-scrollbar" ref={chatContainerRef} onScroll={handleScroll}>
+      <div
+        className="relative z-10 flex-1 overflow-y-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-5 chat-scrollbar"
+        ref={chatContainerRef}
+        onScroll={handleScroll}
+      >
         {isEmpty ? (
           <div className="h-full min-h-75 flex items-center justify-center text-[#8EA7A3] text-center px-4 sm:px-6">
             Start chatting with {selectedUser?.username}.
@@ -48,6 +86,7 @@ const ChatUI = ({
                     minute: "2-digit",
                   })
                 : "");
+
             return (
               <div
                 key={msg._id || msg.id || index}
@@ -60,14 +99,28 @@ const ChatUI = ({
                       : "bg-[#13263E]/95 text-gray-200 rounded-bl-md"
                   }`}
                 >
-                  {msg.image && (
-                    <div className="p-2 pb-0">
-                      <img
-                        src={msg.image}
-                        alt="preview"
-                        className="rounded-xl h-40 sm:h-64 w-full object-cover"
-                      />
-                    </div>
+
+                  {/* ✅ FILE SUPPORT (only change here) */}
+                  {msg.fileUrl && (
+                    msg.fileType?.startsWith("image") ? (
+                      <div className="p-2 pb-0">
+                        <img
+                          src={msg.fileUrl}
+                          alt="preview"
+                          className="rounded-xl h-40 sm:h-64 w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="p-2">
+                        <a
+                          href={msg.fileUrl}
+                          target="_blank"
+                          className="text-blue-300 underline text-sm"
+                        >
+                          Download file
+                        </a>
+                      </div>
+                    )
                   )}
 
                   <div className="px-3 sm:px-4 py-2 sm:py-3">
@@ -102,7 +155,21 @@ const ChatUI = ({
       {/* Input */}
       <div className="relative z-10 px-2 sm:px-3 py-2 sm:py-3 bg-[#0F1E35]/90 border-t border-[#1A3A5C] backdrop-blur-xl">
         <div className="flex items-center gap-2 sm:gap-3">
-          <button type="button" className="text-gray-400 hover:text-white transition shrink-0">
+
+          {/* ✅ Hidden input (NEW but invisible) */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleFile}
+          />
+
+          {/* ✅ + Button (same UI, just added onClick) */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current.click()}
+            className="text-gray-400 hover:text-white transition shrink-0"
+          >
             <BsPlusLg size={18} className="sm:w-5 sm:h-5" />
           </button>
 
