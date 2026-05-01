@@ -15,6 +15,7 @@ const ChatUI = ({
   isTyping,
   chatContainerRef,
   handleScroll,
+  onlineUsers,
 }) => {
   return (
     <div className="h-full w-full bg-[#07111B] overflow-hidden relative flex flex-col">

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FiVideo, FiPhone, FiMoreVertical, FiArrowLeft, FiSettings, FiMessageSquare } from "react-icons/fi";
 import { FaUserCircle } from "react-icons/fa";
+import { ChatContext } from "../context/ChatContext";
 
-const ChatHeader = ({ selectedUser, currentUsername, isTyping, onBack }) => {
+const ChatHeader = ({ selectedUser, currentUsername, isTyping, onBack, onlineUsers }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const { onlineUsers: contextOnlineUsers } = useContext(ChatContext);
 
   if (!selectedUser) return null;
 
@@ -27,7 +29,13 @@ const ChatHeader = ({ selectedUser, currentUsername, isTyping, onBack }) => {
             alt={selectedUser.username}
             className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
           />
-          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 border-2 border-[#0D2038] rounded-full"></span>
+          <span 
+            className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-[#0B141A] rounded-full ${
+                contextOnlineUsers?.includes(selectedUser._id)
+                    ? "bg-green-500"
+                    : "bg-gray-500"
+                }`}
+            ></span>
         </div>
 
         {/* User Details */}
