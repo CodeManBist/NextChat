@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const messageSchema = new mongoose.Schema(
   {
@@ -12,7 +13,15 @@ const messageSchema = new mongoose.Schema(
     },
     text: {
       type: String,
-      required: true,
+      default: "",
+    },
+    fileUrl: {
+      type: String,
+      default: null,
+    },
+    fileType: {
+      type: String,
+      default: null,
     },
     seen: {
       type: Boolean,

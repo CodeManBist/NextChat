@@ -10,6 +10,7 @@ import Message from "./models/message.model.js";
 
 import userRoutes from "./routes/user.routes.js";
 import messageRoutes from "./routes/message.routes.js";
+import uploadRoutes from "./routes/upload.routes.js";
 
 // Config
 dotenv.config();
@@ -39,6 +40,8 @@ app.use(express.json());
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/uploads", express.static("uploads"));
+app.use("/api/upload", uploadRoutes);
 
 // Socket Logic 
 // userId -> Set<socketId> to support multiple tabs/devices per user
@@ -83,14 +86,16 @@ io.on("connection", (socket) => {
   });
 
   // Send message
-  socket.on("sendMessage", async ({ senderId, receiverId, text }) => {
+  socket.on("sendMessage", async ({ senderId, receiverId, text, fileUrl, fileType }) => {
     try {
-      if (!senderId || !receiverId || !text) return;
+      if (!senderId || !receiverId || (!text && !fileUrl)) return;
 
       const newMessage = await Message.create({
         senderId,
         receiverId,
-        text,
+        text: text || "",
+        fileUrl: fileUrl || null,
+        fileType: fileType || null,
         seen: false,
       });
 
