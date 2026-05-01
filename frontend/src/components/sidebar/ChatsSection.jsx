@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { FiSearch } from "react-icons/fi";
+
+import SearchInput from "../ui/SearchInput";
 import { ChatContext } from "../../context/ChatContext";
 
 const ChatsSection = ({ setSelectedUser, selectedUser }) => {
@@ -41,20 +42,16 @@ const ChatsSection = ({ setSelectedUser, selectedUser }) => {
   );
 
   return (
-    <div className="flex flex-col h-full bg-[#0B141A] text-white">
+    <div className="flex flex-col h-full bg-[#0F1E35] text-white">
 
       <div className="px-4 pb-4">
 
         {/* Search */}
-        <div className="relative mt-4">
-          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-
-          <input
-            type="text"
-            placeholder="Search or start new chat"
+        <div className="mt-4">
+          <SearchInput
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#202C33] text-white pl-12 pr-4 py-3 rounded-xl outline-none placeholder:text-gray-400"
+            placeholder="Search or start new chat"
           />
         </div>
       </div>
@@ -69,8 +66,8 @@ const ChatsSection = ({ setSelectedUser, selectedUser }) => {
               onClick={() => setSelectedUser(user)}
               className={`flex items-center gap-4 px-4 py-4 cursor-pointer transition duration-200 ${
                 selectedUser?._id === user._id
-                  ? "bg-[#2A3942]"
-                  : "hover:bg-[#202C33]"
+                  ? "bg-[#1a3a5c]"
+                  : "hover:bg-[#1a2f4a]"
               }`}
             >
 

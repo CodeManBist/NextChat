@@ -19,6 +19,7 @@ const Login = () => {
         "http://localhost:5000/api/users/login",
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
@@ -38,7 +39,7 @@ const Login = () => {
 
         navigate("/");
       } else {
-        console.log(data.message || "Login failed");
+        
       }
 
     } catch (error) {

@@ -20,6 +20,7 @@ const Register = () => {
         "http://localhost:5000/api/users/register",
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
@@ -40,7 +41,7 @@ const Register = () => {
 
         navigate("/");
       } else {
-        console.log(data.message);
+        
       }
 
     } catch (error) {

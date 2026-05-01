@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import AppLayout from "../components/layout/AppLayout";
+import ChatHeader from "../components/ChatHeader";
 import socket from "../socket";
 import ChatUI from "../components/ChatUI";
 
@@ -54,9 +55,23 @@ const Chat = () => {
 
       const data = await response.json();
 
-      setMessages((prev) =>
-        pageNumber === 1 ? data : [...data, ...prev]
-      );
+        // Ensure messages are ordered oldest -> newest for display
+        const ordered = Array.isArray(data) ? data : [];
+        setMessages((prev) =>
+          pageNumber === 1 ? ordered : [...ordered, ...prev]
+        );
+        // If loading first page, ensure we scroll to bottom to show most recent messages
+        if (pageNumber === 1) {
+          requestAnimationFrame(() => {
+            const container = chatContainerRef.current;
+            if (container) {
+              // small timeout to allow layout (images/etc.) to settle
+              setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+              }, 80);
+            }
+          });
+        }
       setPage(pageNumber);
 
       if (data.length < 20) {
@@ -261,28 +276,43 @@ const Chat = () => {
       setSelectedUser={setSelectedUser}
     >
       {!isChatsMenuActive ? (
-        <div className="h-full w-full flex items-center justify-center text-[#8EA7A3] text-center px-6">
-          Select <span className="mx-1 text-green-400 font-semibold">Chats</span> from the left sidebar to start.
+        <div className="h-full w-full flex flex-col items-center justify-center text-[#8EA7A3] text-center px-4 sm:px-6">
+          <p className="text-base sm:text-lg">
+            Select <span className="mx-1 text-green-400 font-semibold">Chats</span> from the sidebar to start.
+          </p>
         </div>
       ) : !selectedUser ? (
-        <div className="h-full w-full flex items-center justify-center text-[#8EA7A3] text-center px-6">
-          Select a user from the left sidebar to start chatting.
+        <div className="h-full w-full flex flex-col items-center justify-center text-[#8EA7A3] text-center px-4 sm:px-6">
+          <p className="text-base sm:text-lg">
+            Select a user to start chatting.
+          </p>
         </div>
       ) : (
-        <ChatUI
-          selectedUser={selectedUser}
-          messages={messages}
-          newMessage={newMessage}
-          setNewMessage={setNewMessage}
-          sendMessage={sendMessage}
-          handleTyping={handleTyping}
-          currentUserId={currentUserId}
-          currentUsername={currentUsername}
-          isEmpty={messages.length === 0}
-          isTyping={isTyping}
-          chatContainerRef={chatContainerRef}
-          handleScroll={handleScroll}
-        />
+        <div className="h-full w-full flex flex-col overflow-hidden">
+          {/* Chat Header - Shows when user is selected */}
+          <ChatHeader
+            selectedUser={selectedUser}
+            currentUsername={currentUsername}
+            isTyping={isTyping}
+            onBack={() => setSelectedUser(null)}
+          />
+
+          {/* Chat Messages Area */}
+          <ChatUI
+            selectedUser={selectedUser}
+            messages={messages}
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            sendMessage={sendMessage}
+            handleTyping={handleTyping}
+            currentUserId={currentUserId}
+            currentUsername={currentUsername}
+            isEmpty={messages.length === 0}
+            isTyping={isTyping}
+            chatContainerRef={chatContainerRef}
+            handleScroll={handleScroll}
+          />
+        </div>
       )}
     </AppLayout>
   );

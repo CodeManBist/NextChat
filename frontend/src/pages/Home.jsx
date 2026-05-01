@@ -9,16 +9,22 @@ const Home = () => {
   const username = localStorage.getItem("username");
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("username");
-    navigate("/login");
+    // Call server to clear cookie (if any) and then clear client state
+    fetch("http://localhost:5000/api/users/logout", {
+      method: "POST",
+      credentials: "include",
+    }).finally(() => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("username");
+      navigate("/login");
+    });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#07111B] to-[#0a1929] flex flex-col">
       {/* NAVIGATION */}
-      <nav className="bg-[#08141B] border-b border-[#1A2A33] px-4 sm:px-6 py-4">
+      <nav className="bg-[#0F1E35] border-b border-[#1A3A5C] px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
@@ -65,7 +71,7 @@ const Home = () => {
 
       {/* MAIN CONTENT */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-8 sm:py-16">
-        <div className="max-w-4xl w-full text-center">
+          <div className="max-w-4xl w-full text-center">
           {/* Hero Section */}
           <div className="mb-8 sm:mb-12">
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6">
@@ -96,21 +102,21 @@ const Home = () => {
           {/* Features Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Feature 1 */}
-            <div className="p-6 sm:p-8 bg-[#0f1e2e] border border-[#1A2A33] rounded-xl hover:border-blue-500 transition">
+            <div className="p-6 sm:p-8 bg-[#0f1e2e] border border-[#1A3A5C] rounded-xl hover:border-blue-500 transition">
               <FiMessageCircle className="h-12 w-12 text-blue-400 mx-auto mb-4" />
               <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">Instant Messaging</h3>
               <p className="text-gray-400 text-sm sm:text-base">Send and receive messages in real-time with our fast and reliable platform.</p>
             </div>
 
             {/* Feature 2 */}
-            <div className="p-6 sm:p-8 bg-[#0f1e2e] border border-[#1A2A33] rounded-xl hover:border-blue-500 transition">
+            <div className="p-6 sm:p-8 bg-[#0f1e2e] border border-[#1A3A5C] rounded-xl hover:border-blue-500 transition">
               <FiUsers className="h-12 w-12 text-blue-400 mx-auto mb-4" />
               <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">Connect With Friends</h3>
               <p className="text-gray-400 text-sm sm:text-base">Build your network and stay connected with people who matter to you.</p>
             </div>
 
             {/* Feature 3 */}
-            <div className="p-6 sm:p-8 bg-[#0f1e2e] border border-[#1A2A33] rounded-xl hover:border-blue-500 transition sm:col-span-2 lg:col-span-1">
+            <div className="p-6 sm:p-8 bg-[#0f1e2e] border border-[#1A3A5C] rounded-xl hover:border-blue-500 transition sm:col-span-2 lg:col-span-1">
               <FiShield className="h-12 w-12 text-blue-400 mx-auto mb-4" />
               <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">Secure & Private</h3>
               <p className="text-gray-400 text-sm sm:text-base">Your messages are encrypted and your privacy is our top priority.</p>
@@ -120,7 +126,7 @@ const Home = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#08141B] border-t border-[#1A2A33] px-4 sm:px-6 py-4 sm:py-6">
+      <footer className="bg-[#0F1E35] border-t border-[#1A3A5C] px-4 sm:px-6 py-4 sm:py-6">
         <div className="max-w-7xl mx-auto text-center text-gray-400 text-xs sm:text-sm">
           <p>&copy; 2026 NextChat. All rights reserved.</p>
         </div>

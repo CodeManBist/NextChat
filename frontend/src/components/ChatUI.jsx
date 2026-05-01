@@ -1,5 +1,7 @@
 import { BsCheck, BsCheck2All, BsEmojiSmile, BsPlusLg, BsSendFill } from "react-icons/bs";
 import { HiMiniMicrophone } from "react-icons/hi2";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
 
 const ChatUI = ({
   selectedUser,
@@ -29,32 +31,10 @@ const ChatUI = ({
         </div>
       </div>
 
-      {/* Header */}
-      <div className="relative z-10 px-5 py-4 border-b border-white/5 bg-black/10 backdrop-blur-md flex items-center justify-between">
-        <div>
-          <p className="text-white font-semibold">{selectedUser?.username}</p>
-          <p className="text-xs text-[#8EA7A3]">
-            {selectedUser ? "Ready to chat" : ""}
-          </p>
-          {isTyping && (
-            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[#18242c] px-3 py-2 shadow-lg border border-white/5">
-              <span className="sr-only">typing</span>
-              <span className="h-2 w-2 rounded-full bg-green-400 animate-bounce [animation-delay:-0.3s]" />
-              <span className="h-2 w-2 rounded-full bg-green-400 animate-bounce [animation-delay:-0.15s]" />
-              <span className="h-2 w-2 rounded-full bg-green-400 animate-bounce" />
-            </div>
-          )}
-        </div>
-
-        <div className="text-xs text-[#8EA7A3]">
-          {currentUsername ? `You are ${currentUsername}` : ""}
-        </div>
-      </div>
-
-      {/* Messages */}
-      <div className="relative z-10 flex-1 overflow-y-auto px-4 py-6 space-y-5 chat-scrollbar" ref={chatContainerRef} onScroll={handleScroll}>
+      {/* Messages Container */}
+      <div className="relative z-10 flex-1 overflow-y-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-5 chat-scrollbar" ref={chatContainerRef} onScroll={handleScroll}>
         {isEmpty ? (
-          <div className="h-full min-h-75 flex items-center justify-center text-[#8EA7A3] text-center px-6">
+          <div className="h-full min-h-75 flex items-center justify-center text-[#8EA7A3] text-center px-4 sm:px-6">
             Start chatting with {selectedUser?.username}.
           </div>
         ) : (
@@ -74,7 +54,7 @@ const ChatUI = ({
                 className={`flex ${isMe ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[75%] rounded-2xl overflow-hidden shadow-2xl border border-white/5 ${
+                  className={`max-w-[75%] sm:max-w-[60%] rounded-2xl overflow-hidden shadow-2xl border border-white/5 ${
                     isMe
                       ? "bg-[#0f9d7a] text-white rounded-br-md"
                       : "bg-[#1a2630]/95 text-gray-200 rounded-bl-md"
@@ -85,12 +65,12 @@ const ChatUI = ({
                       <img
                         src={msg.image}
                         alt="preview"
-                        className="rounded-xl h-64 w-full object-cover"
+                        className="rounded-xl h-40 sm:h-64 w-full object-cover"
                       />
                     </div>
                   )}
 
-                  <div className="px-4 py-3">
+                  <div className="px-3 sm:px-4 py-2 sm:py-3">
                     <p className="text-sm leading-relaxed">{msg.text}</p>
 
                     <div
@@ -120,18 +100,14 @@ const ChatUI = ({
       </div>
 
       {/* Input */}
-      <div className="relative z-10 px-3 py-3 bg-[#16232c]/90 border-t border-white/5 backdrop-blur-xl">
-        <div className="flex items-center gap-3">
-          <button type="button" className="text-gray-400 hover:text-white transition">
-            <BsPlusLg size={20} />
+      <div className="relative z-10 px-2 sm:px-3 py-2 sm:py-3 bg-[#16232c]/90 border-t border-white/5 backdrop-blur-xl">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button type="button" className="text-gray-400 hover:text-white transition flex-shrink-0">
+            <BsPlusLg size={18} className="sm:w-5 sm:h-5" />
           </button>
 
-          <div className="flex-1 h-12 bg-[#243540] rounded-xl px-4 flex items-center gap-3 border border-white/5">
-            <BsEmojiSmile size={20} className="text-gray-400" />
-
-            <input
-              type="text"
-              placeholder={`Type a message to ${selectedUser?.username || "user"}`}
+          <div className="flex-1">
+            <Input
               value={newMessage}
               onChange={(e) => {
                 setNewMessage(e.target.value);
@@ -139,23 +115,24 @@ const ChatUI = ({
               }}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
               onBlur={() => handleTyping?.("")}
-              className="bg-transparent outline-none text-white placeholder:text-gray-500 w-full text-sm"
-            />
-
-            <HiMiniMicrophone
-              size={20}
-              className="text-gray-400 cursor-pointer hover:text-white transition"
+              placeholder={`Message ${selectedUser?.username || 'user'}`}
             />
           </div>
 
-          <button
-            type="button"
-            onClick={sendMessage}
-            disabled={!newMessage.trim()}
-            className="h-12 w-12 rounded-full bg-[#1ecf8b] flex items-center justify-center text-black shadow-lg hover:scale-105 transition disabled:opacity-50 disabled:hover:scale-100"
-          >
-            <BsSendFill size={18} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button type="button" className="text-gray-400 hover:text-white">
+              <BsPlusLg size={18} />
+            </button>
+
+            <Button
+              size="sm"
+              variant="success"
+              onClick={sendMessage}
+              disabled={!newMessage.trim()}
+            >
+              <BsSendFill />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

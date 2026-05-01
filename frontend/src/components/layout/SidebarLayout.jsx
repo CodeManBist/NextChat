@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Sidebar from "../sidebar/Sidebar";
 
 const SidebarLayout = ({
@@ -6,15 +6,17 @@ const SidebarLayout = ({
   setActiveMenu,
   selectedUser,
   setSelectedUser,
+  onSelectUser,
 }) => {
 
   return (
-    <div className="flex h-screen bg-[#07141B]">
+    <div className="h-full w-full bg-[#07141B] flex">
       <Sidebar
         activeMenu={activeMenu}
         setActiveMenu={setActiveMenu}
         selectedUser={selectedUser}
         setSelectedUser={setSelectedUser}
+        onSelectUser={onSelectUser}
       />
     </div>
   );
