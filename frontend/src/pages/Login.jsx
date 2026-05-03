@@ -10,6 +10,7 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -39,11 +40,12 @@ const Login = () => {
 
         navigate("/");
       } else {
-        
+        setErrorMessage(data.message || "Invalid email or password");
       }
 
     } catch (error) {
       console.error("Login error:", error);
+      setErrorMessage("Something went wrong.");
     }
   };
 
@@ -78,6 +80,9 @@ const Login = () => {
         </button>
 
       </form>
+      {errorMessage && (
+        <p className="text-red-500 text-sm mt-2 text-center">{errorMessage}</p>
+      )}
     </AuthCard>
   );
 };

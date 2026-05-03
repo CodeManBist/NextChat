@@ -162,6 +162,10 @@ const Chat = () => {
 
   // ================= SOCKET SETUP =================
   useEffect(() => {
+    if(Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
     if (!currentUserId) return;
 
     // Identify user
@@ -169,6 +173,24 @@ const Chat = () => {
 
     // Listen for incoming messages
     socket.on("receiveMessage", (message) => {
+      // Check if message is from the selected user (active chat)
+      const isActiveChat = 
+        message.senderId === selectedUser?._id;
+
+      // Only show notification if app is hidden OR not viewing this conversation
+      if(
+        message.receiverId === currentUserId &&
+        (document.visibilityState === "hidden" || !isActiveChat)
+      ) {
+        new Notification("New Message", {
+          body: 
+            message.text ||
+            "Sent an attachment",
+
+          icon: "/logo.png"
+        });
+      }
+
       // Only update if message belongs to current chat
       if (
         message.senderId === selectedUser?._id ||

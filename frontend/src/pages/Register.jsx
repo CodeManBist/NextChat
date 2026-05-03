@@ -11,6 +11,7 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -41,11 +42,12 @@ const Register = () => {
 
         navigate("/");
       } else {
-        
+        setErrorMessage(data.message || "Registration failed");
       }
 
     } catch (error) {
       console.error("Registration error:", error);
+      setErrorMessage("Something went wrong.");
     }
   };
 
@@ -87,6 +89,9 @@ const Register = () => {
         </button>
 
       </form>
+      {errorMessage && (
+        <p className="text-red-500 text-sm mt-2 text-center">{errorMessage}</p>
+      )}
     </AuthCard>
   );
 };
