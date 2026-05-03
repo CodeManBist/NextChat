@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BsCheck, BsCheck2All, BsEmojiSmile, BsPlusLg, BsSendFill } from "react-icons/bs";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
@@ -20,6 +20,25 @@ const ChatUI = ({
   onlineUsers,
 }) => {
   const fileInputRef = useRef(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+  useEffect(() => {
+    if (!previewImage) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setPreviewImage(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [previewImage]);
 
   // ✅ File upload handler (no UI change)
   const handleFile = async (e) => {
@@ -104,17 +123,24 @@ const ChatUI = ({
                   {msg.fileUrl && (
                     msg.fileType?.startsWith("image") ? (
                       <div className="p-2 pb-0">
-                        <img
-                          src={msg.fileUrl}
-                          alt="preview"
-                          className="rounded-xl h-40 sm:h-64 w-full object-cover"
-                        />
+                        <button
+                          type="button"
+                          onClick={() => setPreviewImage(msg.fileUrl)}
+                          className="block w-full overflow-hidden rounded-xl cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-sky-400/70"
+                        >
+                          <img
+                            src={msg.fileUrl}
+                            alt="preview"
+                            className="h-40 sm:h-64 w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+                          />
+                        </button>
                       </div>
                     ) : (
                       <div className="p-2">
                         <a
                           href={msg.fileUrl}
                           target="_blank"
+                          rel="noreferrer"
                           className="text-blue-300 underline text-sm"
                         >
                           Download file
@@ -151,6 +177,30 @@ const ChatUI = ({
           })
         )}
       </div>
+
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div className="relative max-h-full max-w-6xl w-full flex items-center justify-center" onClick={(event) => event.stopPropagation()}>
+            <button
+              type="button"
+              onClick={() => setPreviewImage(null)}
+              className="absolute -top-2 -right-2 sm:top-0 sm:right-0 z-10 h-10 w-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition flex items-center justify-center"
+              aria-label="Close image preview"
+            >
+              <span className="text-2xl leading-none">×</span>
+            </button>
+
+            <img
+              src={previewImage}
+              alt="Expanded preview"
+              className="max-h-[88vh] max-w-full rounded-2xl shadow-2xl object-contain"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Input */}
       <div className="relative z-10 px-2 sm:px-3 py-2 sm:py-3 bg-[#0F1E35]/90 border-t border-[#1A3A5C] backdrop-blur-xl">
