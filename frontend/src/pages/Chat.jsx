@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import AppLayout from "../components/layout/AppLayout";
-import ChatHeader from "../components/ChatHeader";
+import ChatHeaderUnified from "../components/ChatHeaderUnified";
 import socket from "../socket";
 import ChatUI from "../components/ChatUI";
+import GroupChat from "../components/groups/GroupChat";
+import { GroupContext } from "../context/GroupContext";
+import useTypingIndicator from "../hooks/useTypingIndicator";
 import { FiMessageCircle, FiSettings, FiUsers } from "react-icons/fi";
 import { MdOutlineRadioButtonChecked } from "react-icons/md";
 
@@ -19,9 +22,37 @@ const Chat = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   const currentUserId = localStorage.getItem("userId");
   const currentUsername = localStorage.getItem("username");
+  const { setCurrentGroup } = useContext(GroupContext);
+
+  // Typing indicator with debouncing for 1-on-1 chats
+  const { handleTyping } = useTypingIndicator(
+    () => {
+      if (selectedUser && !selectedUser.isGroup) {
+        socket.emit("typing", { senderId: currentUserId, receiverId: selectedUser._id });
+      }
+    },
+    () => {
+      if (selectedUser && !selectedUser.isGroup) {
+        socket.emit("stopTyping", { senderId: currentUserId, receiverId: selectedUser._id });
+      }
+    }
+  );
+
+  // Clear currentGroup when switching away from group chat
+  useEffect(() => {
+    if (selectedUser?.isGroup) {
+      // Group will set currentGroup via GroupsSection
+      // This just ensures it's set if coming back to selected group
+      setCurrentGroup(selectedUser);
+    } else {
+      // Clear currentGroup for individual chats
+      setCurrentGroup(null);
+    }
+  }, [selectedUser?.isGroup, selectedUser?._id]);
 
   const scrollToBottom = () => {
     const container = chatContainerRef.current;
@@ -99,6 +130,8 @@ const Chat = () => {
   const sendMessage = () => {
     if (!newMessage.trim() || !selectedUser) return;
 
+    console.log("🚀 sendMessage called with:", newMessage.trim());
+
     const messageData = {
       senderId: currentUserId,
       receiverId: selectedUser._id,
@@ -144,22 +177,6 @@ const Chat = () => {
     );
   };
 
-  const handleTyping = (text) => {
-    if (!selectedUser) return;
-
-    if (text.trim()) {
-      socket.emit("typing", {
-        senderId: currentUserId,
-        receiverId: selectedUser._id,
-      });
-    } else {
-      socket.emit("stopTyping", {
-        senderId: currentUserId,
-        receiverId: selectedUser._id,
-      });
-    }
-  };
-
   // ================= SOCKET SETUP =================
   useEffect(() => {
     if(Notification.permission !== "granted") {
@@ -168,11 +185,15 @@ const Chat = () => {
 
     if (!currentUserId) return;
 
-    // Identify user
-    socket.emit("identifyUser", currentUserId);
+    // Listen for online users
+    socket.on("onlineUsers", (users) => {
+      setOnlineUsers(users);
+    });
 
     // Listen for incoming messages
     socket.on("receiveMessage", (message) => {
+
+      
       // Check if message is from the selected user (active chat)
       const isActiveChat = 
         message.senderId === selectedUser?._id;
@@ -197,7 +218,8 @@ const Chat = () => {
         message.receiverId === selectedUser?._id
       ) {
         setMessages((prev) => {
-          if (message._id && prev.some((msg) => msg._id === message._id)) {
+          const isDuplicate = message._id && prev.some((msg) => msg._id === message._id);
+          if (isDuplicate) {
             return prev;
           }
           const nextMessages = [...prev, message];
@@ -243,6 +265,7 @@ const Chat = () => {
       }
     });
 
+
     socket.on("stopTyping", ({ senderId, receiverId }) => {
       if (senderId === selectedUser?._id && receiverId === currentUserId) {
         setIsTyping(false);
@@ -250,12 +273,13 @@ const Chat = () => {
     });
 
     return () => {
+      socket.off("onlineUsers");
       socket.off("receiveMessage");
       socket.off("messagesSeen");
       socket.off("typing");
       socket.off("stopTyping");
     };
-  }, [selectedUser, currentUserId]);
+  }, [selectedUser?._id, currentUserId]);
 
   // ================= LOAD CHAT WHEN USER SELECTED =================
   useEffect(() => {
@@ -302,11 +326,11 @@ const Chat = () => {
     markConversationSeen();
   }, [messages, selectedUser, currentUserId]);
 
-  const isChatsMenuActive = activeMenu === "chats";
+  const isChatsMenuActive = activeMenu === "chats" || activeMenu === "groups";
   const panelMessages = {
     chats: "Select a user to start chatting.",
     status: "Status section selected. Add status updates here.",
-    channels: "Channels section selected. Join or create channels here.",
+    groups: "Create or join groups to chat with multiple members.",
     settings: "Settings section selected. Manage preferences here.",
     default: "Select a section from the sidebar to continue.",
   };
@@ -322,10 +346,10 @@ const Chat = () => {
       title: "Status",
       helper: "Share quick updates and view status activity.",
     },
-    channels: {
+    groups: {
       icon: FiUsers,
-      title: "Channels",
-      helper: "Create or join channels to chat with groups.",
+      title: "Groups",
+      helper: "Create or join groups to chat with multiple members.",
     },
     settings: {
       icon: FiSettings,
@@ -351,7 +375,7 @@ const Chat = () => {
     <div className="h-full w-full relative overflow-hidden bg-[#07111B] flex items-center justify-center px-4 sm:px-6">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 h-[26rem] w-[26rem] rounded-full bg-sky-500/10 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-sky-500/10 blur-3xl" />
       </div>
 
       <div className="relative z-10 w-full max-w-xl rounded-2xl border border-[#1A3A5C] bg-[#0F1E35]/75 backdrop-blur-md p-6 sm:p-8 text-center shadow-2xl">
@@ -384,14 +408,20 @@ const Chat = () => {
         <EmptyStatePanel message={currentPanelMessage} />
       ) : !selectedUser ? (
         <EmptyStatePanel message={currentPanelMessage} />
+      ) : selectedUser?.isGroup ? (
+        // Group Chat View
+        <GroupChat onBack={() => setSelectedUser(null)} />
       ) : (
+        // Individual Chat View
         <div className="h-full w-full flex flex-col overflow-hidden">
-          {/* Chat Header - Shows when user is selected */}
-          <ChatHeader
+          {/* Unified Chat Header - Works for both 1-on-1 and groups */}
+          <ChatHeaderUnified
             selectedUser={selectedUser}
+            isGroup={false}
+            onBack={() => setSelectedUser(null)}
             currentUsername={currentUsername}
             isTyping={isTyping}
-            onBack={() => setSelectedUser(null)}
+            onlineUsers={onlineUsers}
           />
 
           {/* Chat Messages Area */}

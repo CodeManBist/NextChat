@@ -4,11 +4,14 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from "react-router-dom";
 import ChatProvider from "./context/ChatContext.jsx";
+import GroupProvider from "./context/GroupContext.jsx";
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <ChatProvider>
-      <App />
+      <GroupProvider>
+        <App />
+      </GroupProvider>
     </ChatProvider>
   </BrowserRouter>,
 )

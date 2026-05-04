@@ -4,12 +4,14 @@ import { type } from "os";
 const messageSchema = new mongoose.Schema(
   {
     senderId: {
-      type: String, // later ObjectId
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     receiverId: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
     text: {
       type: String,
@@ -21,6 +23,11 @@ const messageSchema = new mongoose.Schema(
     },
     fileType: {
       type: String,
+      default: null,
+    },
+    groupId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Group",
       default: null,
     },
     seen: {

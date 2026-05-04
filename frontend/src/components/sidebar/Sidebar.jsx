@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 import { MdOutlineRadioButtonChecked } from "react-icons/md";
 import ChatsSection from "./ChatsSection";
+import GroupsSection from "./GroupsSection";
 
 const Sidebar = ({ activeMenu, setActiveMenu, selectedUser, setSelectedUser, onSelectUser }) => {
   const menus = [
@@ -24,8 +25,8 @@ const Sidebar = ({ activeMenu, setActiveMenu, selectedUser, setSelectedUser, onS
       icon: <MdOutlineRadioButtonChecked size={20} />,
     },
     {
-      id: "channels",
-      label: "Channels",
+      id: "groups",
+      label: "Groups",
       icon: <FiUsers size={20} />,
     },
     {
@@ -40,8 +41,8 @@ const Sidebar = ({ activeMenu, setActiveMenu, selectedUser, setSelectedUser, onS
   // MAIN MENU
   if (!activeMenu) {
     return (
-      <div className="relative w-full h-full bg-gradient-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] p-4 flex flex-col">
-        <div className="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 via-transparent to-transparent opacity-80" />
+    <div className="relative w-full h-full bg-linear-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] p-4 flex flex-col">
+      <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-blue-400 via-transparent to-transparent opacity-80" />
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => navigate("/")} className="flex items-center gap-2">
             <FiMessageCircle className="text-blue-400 w-6 h-6" />
@@ -71,15 +72,15 @@ const Sidebar = ({ activeMenu, setActiveMenu, selectedUser, setSelectedUser, onS
    // CHATS PAGE
 if (activeMenu === "chats") {
   return (
-    <div className="relative w-full h-full bg-gradient-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] flex flex-col">
-      <div className="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 via-transparent to-transparent opacity-80" />
+    <div className="relative w-full h-full bg-linear-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] flex flex-col">
+      <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-blue-400 via-transparent to-transparent opacity-80" />
 
       {/* Header */}
       <div className="h-16 sm:h-20 flex items-center px-3 sm:px-5 border-b border-[#1A3A5C] bg-[#0D2038]">
         <div className="flex items-center gap-3">
         <FiArrowLeft
           size={22}
-          className="cursor-pointer text-white flex-shrink-0"
+          className="cursor-pointer text-white shrink-0"
           onClick={() => {
             if (selectedUser) {
               // If a user is selected, go back to the chats list instead of closing the menu
@@ -114,8 +115,8 @@ if (activeMenu === "chats") {
   // STATUS PAGE
   if (activeMenu === "status") {
     return (
-      <div className="relative w-full h-full bg-gradient-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] p-4 flex flex-col">
-        <div className="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 via-transparent to-transparent opacity-80" />
+<div className="relative w-full h-full bg-linear-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] p-4 flex flex-col">
+      <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-blue-400 via-transparent to-transparent opacity-80" />
         <div className="flex items-center gap-3 mb-6">
           <FiArrowLeft
             size={22}
@@ -135,25 +136,36 @@ if (activeMenu === "chats") {
     );
   }
 
-  // CHANNELS PAGE
-  if (activeMenu === "channels") {
+  // GROUPS PAGE
+  if (activeMenu === "groups") {
     return (
-      <div className="relative w-full h-full bg-gradient-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] p-4 flex flex-col">
-        <div className="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 via-transparent to-transparent opacity-80" />
-        <div className="flex items-center gap-3 mb-6">
-          <FiArrowLeft
-            size={22}
-            className="cursor-pointer text-white"
-            onClick={() => setActiveMenu(null)}
-          />
+      <div className="relative w-full h-full bg-linear-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] flex flex-col">
+        <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-blue-400 via-transparent to-transparent opacity-80" />
 
-          <h2 className="text-xl sm:text-2xl font-semibold text-blue-400">
-            Channels
-          </h2>
+        {/* Header */}
+        <div className="h-16 sm:h-20 flex items-center px-3 sm:px-5 border-b border-[#1A3A5C] bg-[#0D2038]">
+          <div className="flex items-center gap-3">
+            <FiArrowLeft
+              size={22}
+              className="cursor-pointer text-white shrink-0"
+              onClick={() => setActiveMenu(null)}
+            />
+
+            <h2 className="text-xl sm:text-2xl font-semibold text-blue-400">
+              Groups
+            </h2>
+          </div>
         </div>
 
-        <div className="text-gray-400 flex-1 flex items-center justify-center">
-          
+        {/* Groups Section */}
+        <div className="flex-1 overflow-hidden">
+          <GroupsSection
+            selectedGroup={selectedUser}
+            setSelectedGroup={(group) => {
+              setSelectedUser({ ...group, isGroup: true });
+              onSelectUser?.();
+            }}
+          />
         </div>
       </div>
     );
@@ -162,8 +174,8 @@ if (activeMenu === "chats") {
   // SETTINGS PAGE
   if (activeMenu === "settings") {
     return (
-      <div className="relative w-full h-full bg-gradient-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] p-4 flex flex-col">
-        <div className="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 via-transparent to-transparent opacity-80" />
+<div className="relative w-full h-full bg-linear-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] p-4 flex flex-col">
+      <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-blue-400 via-transparent to-transparent opacity-80" />
         <div className="flex items-center gap-3 mb-6">
           <FiArrowLeft
             size={22}

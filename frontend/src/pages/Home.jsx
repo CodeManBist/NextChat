@@ -17,12 +17,13 @@ const Home = () => {
       localStorage.removeItem("token");
       localStorage.removeItem("userId");
       localStorage.removeItem("username");
+      window.dispatchEvent(new Event("auth-changed"));
       navigate("/login");
     });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#07111B] to-[#0a1929] flex flex-col">
+    <div className="min-h-screen bg-linear-to-br from-[#07111B] to-[#0a1929] flex flex-col">
       {/* NAVIGATION */}
       <nav className="bg-[#0F1E35] border-b border-[#1A3A5C] px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -86,14 +87,14 @@ const Home = () => {
           {isAuthenticated ? (
             <button
               onClick={() => navigate("/chat")}
-              className="mb-12 sm:mb-20 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-base sm:text-lg font-semibold transition transform hover:scale-105"
+              className="mb-12 sm:mb-20 px-6 sm:px-8 py-3 sm:py-4 bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-base sm:text-lg font-semibold transition transform hover:scale-105"
             >
               Open Chats
             </button>
           ) : (
             <button
               onClick={() => navigate("/register")}
-              className="mb-12 sm:mb-20 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-base sm:text-lg font-semibold transition transform hover:scale-105"
+              className="mb-12 sm:mb-20 px-6 sm:px-8 py-3 sm:py-4 bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-base sm:text-lg font-semibold transition transform hover:scale-105"
             >
               Get Started
             </button>

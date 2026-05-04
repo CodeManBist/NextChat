@@ -16,9 +16,10 @@ const AppLayout = ({
   };
 
   useEffect(() => {
+    // Show sidebar on mobile when menu is selected but no user/group selected
     if (
       window.innerWidth < 1024 &&
-      activeMenu === "chats" &&
+      (activeMenu === "chats" || activeMenu === "groups") &&
       !selectedUser
     ) {
       setSidebarOpen(true);

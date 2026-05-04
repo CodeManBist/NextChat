@@ -1,5 +1,5 @@
 ﻿import React, { createContext, useEffect, useState } from "react";
-import socket from "../socket";
+import socket, { syncSocketAuth } from "../socket";
 
 export const ChatContext = createContext({
 	onlineUsers: [],
@@ -7,31 +7,25 @@ export const ChatContext = createContext({
 
 const ChatProvider = ({ children }) => {
 	const [onlineUsers, setOnlineUsers] = useState([]);
-	const currentUserId = localStorage.getItem("userId");
 
 	useEffect(() => {
 		const handleOnlineUsers = (userIds) => {
 			setOnlineUsers(Array.isArray(userIds) ? userIds : []);
 		};
 
-		const identifyCurrentUser = () => {
-			if (currentUserId) {
-				socket.emit("identifyUser", currentUserId);
-			}
+		const handleAuthChange = () => {
+			syncSocketAuth(localStorage.getItem("token"));
 		};
 
 		socket.on("onlineUsers", handleOnlineUsers);
-		socket.on("connect", identifyCurrentUser);
-
-		if (socket.connected) {
-			identifyCurrentUser();
-		}
+		window.addEventListener("auth-changed", handleAuthChange);
+		handleAuthChange();
 
 		return () => {
 			socket.off("onlineUsers", handleOnlineUsers);
-			socket.off("connect", identifyCurrentUser);
+			window.removeEventListener("auth-changed", handleAuthChange);
 		};
-	}, [currentUserId]);
+	}, []);
 
 	return (
 		<ChatContext.Provider value={{ onlineUsers }}>
