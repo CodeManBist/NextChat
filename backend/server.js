@@ -15,8 +15,8 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-// Initialize Socket.IO server
-const io = createSocketServer(httpServer);
+// Initialize Socket.IO server (await because adapter may initialize Redis)
+const io = await createSocketServer(httpServer);
 
 // Setup database connection
 connectDB();

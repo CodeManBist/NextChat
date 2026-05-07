@@ -5,11 +5,11 @@ export const setupChatHandlers = (io, socket) => {
   const senderId = socket.data.userId;
 
   // Typing indicator
-  socket.on("typing", ({ receiverId }) => {
+  socket.on("typing", async ({ receiverId }) => {
     if (!senderId || !receiverId) return;
 
-    const receiverSockets = getUserSockets(receiverId);
-    if (!receiverSockets) return;
+    const receiverSockets = await getUserSockets(receiverId);
+    if (!receiverSockets || receiverSockets.length === 0) return;
 
     receiverSockets.forEach((socketId) => {
       io.to(socketId).emit("typing", { senderId, receiverId });
@@ -17,11 +17,11 @@ export const setupChatHandlers = (io, socket) => {
   });
 
   // Stop typing indicator
-  socket.on("stopTyping", ({ receiverId }) => {
+  socket.on("stopTyping", async ({ receiverId }) => {
     if (!senderId || !receiverId) return;
 
-    const receiverSockets = getUserSockets(receiverId);
-    if (!receiverSockets) return;
+    const receiverSockets = await getUserSockets(receiverId);
+    if (!receiverSockets || receiverSockets.length === 0) return;
 
     receiverSockets.forEach((socketId) => {
       io.to(socketId).emit("stopTyping", { senderId, receiverId });
@@ -46,11 +46,11 @@ export const setupChatHandlers = (io, socket) => {
 
       console.log("✅ Message saved to DB:", newMessage._id);
 
-      const receiverSocketIds = getUserSockets(receiverId);
+      const receiverSocketIds = await getUserSockets(receiverId);
 
       // Send to receiver
-      if (receiverSocketIds && receiverSocketIds.size > 0) {
-        console.log(`📤 Sending to receiver (${receiverSocketIds.size} devices)`);
+      if (receiverSocketIds && receiverSocketIds.length > 0) {
+        console.log(`📤 Sending to receiver (${receiverSocketIds.length} devices)`);
         receiverSocketIds.forEach((receiverSocketId) => {
           io.to(receiverSocketId).emit("receiveMessage", newMessage);
         });
@@ -93,10 +93,10 @@ export const setupChatHandlers = (io, socket) => {
       );
 
       if (result.modifiedCount > 0 && unseenMessages.length > 0) {
-        const senderSockets = getUserSockets(messageFromSenderId);
+        const senderSockets = await getUserSockets(messageFromSenderId);
         const seenMessageIds = unseenMessages.map((message) => message._id.toString());
 
-        if (senderSockets && senderSockets.size > 0) {
+        if (senderSockets && senderSockets.length > 0) {
           senderSockets.forEach((senderSocketId) => {
             io.to(senderSocketId).emit("messagesSeen", {
               seenBy: receiverId,
