@@ -1,8 +1,9 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BsPlusLg, BsSendFill, BsEmojiSmile } from "react-icons/bs";
 import Input from "./Input";
 import Button from "./Button";
 import socket from "../../socket";
+import EmojiPicker from "emoji-picker-react";
 
 const ChatInputArea = ({
   newMessage,
@@ -14,7 +15,28 @@ const ChatInputArea = ({
   showEmoji = true,
   disabled = false,
 }) => {
+  const [showPicker, setShowPicker] = useState(false);
+
   const fileInputRef = useRef(null);
+  const pickerRef = useRef(null);
+
+  const handleEmojiSelect = (emojiData) => {
+    const emoji = emojiData.emoji;
+    setNewMessage((prev) => prev + emoji);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+        setShowPicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleFile = async (e) => {
     const file = e.target.files[0];
@@ -86,7 +108,7 @@ const ChatInputArea = ({
           <button
             type="button"
             className="shrink-0 p-2 hover:bg-[#1a3a5c] rounded-lg transition text-gray-400 hover:text-white"
-            disabled={disabled}
+            onClick={() => setShowPicker((prev) => !prev)}
           >
             <BsEmojiSmile size={20} />
           </button>
@@ -101,6 +123,35 @@ const ChatInputArea = ({
           <BsSendFill size={18} />
         </button>
       </div>
+
+      { showPicker &&(
+        <div
+          ref={pickerRef}
+          className="
+            absolute 
+            bottom-16 right-2
+            sm:right-4
+            z-50
+            w-[90vw]
+            sm:w-auto
+            max-w-[320px]
+          "
+        >
+          <EmojiPicker
+            onEmojiClick={handleEmojiSelect}
+            theme="dark"
+            width="100%"
+            height={400}
+            previewConfig={{
+              showPreview: false,
+            }}
+            style={{
+              backgroundColor: "#0D2038",
+              borderColor: "#1A3A5C",
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };
