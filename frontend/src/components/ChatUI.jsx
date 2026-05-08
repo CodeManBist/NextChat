@@ -69,6 +69,7 @@ const ChatUI = ({
                 showSenderInfo={false}
                 showSeenStatus={true}
                 onImageClick={(imageUrl) => setPreviewImage(imageUrl)}
+                allowReactions={true}
               />
             );
           })

@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { BsCheck, BsCheck2All } from "react-icons/bs";
 import Avatar from "./Avatar";
+import EmojiPickerPopup from "./EmojiPickerPopup";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const MessageBubble = ({
   message,
@@ -9,7 +12,14 @@ const MessageBubble = ({
   showSenderInfo = false,
   showSeenStatus = false,
   onImageClick,
+  allowReactions = false,
+  reactionPosition = "bottom-12 right-0",
 }) => {
+  const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [reactionError, setReactionError] = useState("");
+  const reactionButtonRef = useRef(null);
+  const [reactionPickerStyle, setReactionPickerStyle] = useState(null);
+
   const messageTime = message.time ||
     (message.createdAt
       ? new Date(message.createdAt).toLocaleTimeString([], {
@@ -21,15 +31,115 @@ const MessageBubble = ({
   // Get sender name (for group chats)
   const senderName = message.senderId?.username || message.sender || "Unknown";
 
+  const reactions = Array.isArray(message.reactions) ? message.reactions : [];
+
+  const reactionSummary = useMemo(() => {
+    const summary = new Map();
+
+    reactions.forEach((reaction) => {
+      const emoji = reaction.emoji;
+      if (!emoji) return;
+
+      const existing = summary.get(emoji) || { emoji, count: 0, reactedByMe: false };
+      existing.count += 1;
+
+      const reactionUserId = reaction.userId?._id || reaction.userId;
+      if (reactionUserId?.toString() === currentUserId?.toString()) {
+        existing.reactedByMe = true;
+      }
+
+      summary.set(emoji, existing);
+    });
+
+    return Array.from(summary.values());
+  }, [reactions, currentUserId]);
+
+  const myReaction = reactions.find((reaction) => {
+    const reactionUserId = reaction.userId?._id || reaction.userId;
+    return reactionUserId?.toString() === currentUserId?.toString();
+  });
+
+  const isPrivateMessage = !message.groupId;
+
+  const openReactionPicker = () => {
+    const buttonRect = reactionButtonRef.current?.getBoundingClientRect();
+
+    if (buttonRect) {
+      const estimatedWidth = window.innerWidth < 640 ? 320 : 340;
+      const estimatedHeight = window.innerWidth < 640 ? 320 : 400;
+      const margin = 8;
+
+      const fitsRight = buttonRect.right + estimatedWidth + margin <= window.innerWidth;
+      const fitsBelow = buttonRect.bottom + estimatedHeight + margin <= window.innerHeight;
+
+      const left = fitsRight
+        ? buttonRect.right + margin
+        : Math.max(margin, buttonRect.left - estimatedWidth - margin);
+
+      const top = fitsBelow
+        ? buttonRect.bottom + margin
+        : Math.max(margin, buttonRect.top - estimatedHeight - margin);
+
+      setReactionPickerStyle({
+        position: "fixed",
+        top,
+        left,
+        zIndex: 60,
+      });
+    }
+
+    setShowReactionPicker(true);
+  };
+
+  const updateReaction = async (emoji) => {
+    if (!allowReactions || !isPrivateMessage || !message?._id) return;
+
+    try {
+      setReactionError("");
+
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      if (myReaction?.emoji === emoji) {
+        const response = await fetch(`${API_BASE_URL}/api/messages/${message._id}/reaction`, {
+          method: "DELETE",
+          headers,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to remove reaction");
+        }
+      } else {
+        const response = await fetch(`${API_BASE_URL}/api/messages/${message._id}/reaction`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ emoji }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to react to message");
+        }
+      }
+
+      setShowReactionPicker(false);
+      window.dispatchEvent(new CustomEvent("messageReactionUpdated"));
+    } catch (error) {
+      setReactionError(error.message || "Reaction update failed");
+    }
+  };
+
   return (
-    <div className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
+    <div className={`group relative flex ${isMe ? "justify-end" : "justify-start"}`}>
       <div className={`flex ${isMe ? "flex-row-reverse" : "flex-row"} gap-2 max-w-[75%] sm:max-w-[60%]`}>
         {/* Sender Avatar (for groups) */}
         {showSenderInfo && !isMe && (
           <Avatar name={senderName} size="sm" />
         )}
 
-        <div>
+        <div className="relative">
           {/* Sender Name (for groups) */}
           {showSenderInfo && !isMe && (
             <p className="text-xs text-gray-400 mb-1 px-3">{senderName}</p>
@@ -99,6 +209,51 @@ const MessageBubble = ({
               </div>
             </div>
           </div>
+
+          {allowReactions && isPrivateMessage && (
+            <div className="relative mt-1 flex flex-wrap items-center justify-end gap-1.5 px-1">
+              {reactionSummary.map((reaction) => (
+                <button
+                  key={reaction.emoji}
+                  type="button"
+                  onClick={() => updateReaction(reaction.emoji)}
+                  className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs shadow-lg transition ${
+                    reaction.reactedByMe
+                      ? "border-sky-300/70 bg-sky-400/20 text-white"
+                      : "border-white/10 bg-white/5 text-gray-200 hover:bg-white/10"
+                  }`}
+                  aria-label={`React with ${reaction.emoji}`}
+                >
+                  <span>{reaction.emoji}</span>
+                  {reaction.count > 1 && <span>{reaction.count}</span>}
+                </button>
+              ))}
+
+              <button
+                ref={reactionButtonRef}
+                type="button"
+                onClick={openReactionPicker}
+                className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-gray-200 opacity-0 shadow-lg transition group-hover:opacity-100 hover:bg-white/10"
+                aria-label="Open emoji reactions"
+              >
+                +
+              </button>
+
+              {reactionError && (
+                <span className="w-full text-[11px] text-red-300">{reactionError}</span>
+              )}
+            </div>
+          )}
+
+          {showReactionPicker && (
+            <EmojiPickerPopup
+              show={showReactionPicker}
+              onClose={() => setShowReactionPicker(false)}
+              onEmojiSelect={(emojiData) => updateReaction(emojiData.emoji)}
+              position={reactionPosition}
+              style={reactionPickerStyle}
+            />
+          )}
         </div>
       </div>
     </div>

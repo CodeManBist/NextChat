@@ -1,6 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-const ImagePreviewModal = ({ imageUrl, onClose }) => {
+const ImagePreviewModal = ({ imageUrl, onClose, closeOnEscape = true }) => {
+  useEffect(() => {
+    if (!imageUrl) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (closeOnEscape && event.key === "Escape") {
+        onClose?.();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [imageUrl, onClose, closeOnEscape]);
+
   if (!imageUrl) return null;
 
   return (
@@ -24,7 +40,7 @@ const ImagePreviewModal = ({ imageUrl, onClose }) => {
         <img
           src={imageUrl}
           alt="Expanded preview"
-          className="max-h-[88vh] max-w-full rounded-2xl shadow-2xl object-contain"
+          className="max-h-[80vh] sm:max-h-[88vh] max-w-full rounded-2xl shadow-2xl object-contain"
         />
       </div>
     </div>

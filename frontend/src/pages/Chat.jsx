@@ -91,9 +91,20 @@ const Chat = () => {
     try {
       setIsLoadingMore(true);
 
+      const token = localStorage.getItem("token");
+
       const response = await fetch(
-        `http://localhost:5000/api/messages/${currentUserId}/${userId}?page=${pageNumber}&limit=20`
+        `http://localhost:5000/api/messages/${currentUserId}/${userId}?page=${pageNumber}&limit=20`,
+        {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        }
       );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch messages (${response.status})`);
+      }
 
       const data = await response.json();
 
@@ -325,6 +336,20 @@ const Chat = () => {
   useEffect(() => {
     markConversationSeen();
   }, [messages, selectedUser, currentUserId]);
+
+  useEffect(() => {
+    const handleReactionUpdate = () => {
+      if (selectedUser && !selectedUser.isGroup) {
+        fetchMessages(selectedUser._id, 1);
+      }
+    };
+
+    window.addEventListener("messageReactionUpdated", handleReactionUpdate);
+
+    return () => {
+      window.removeEventListener("messageReactionUpdated", handleReactionUpdate);
+    };
+  }, [selectedUser]);
 
   const isChatsMenuActive = activeMenu === "chats" || activeMenu === "groups";
   const panelMessages = {

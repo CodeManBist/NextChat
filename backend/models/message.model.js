@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { type } from "os";
 
 const messageSchema = new mongoose.Schema(
   {
@@ -30,6 +29,15 @@ const messageSchema = new mongoose.Schema(
       ref: "Group",
       default: null,
     },
+    reactions: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        emoji: String,
+      }
+    ],
     seen: {
       type: Boolean,
       default: false,
