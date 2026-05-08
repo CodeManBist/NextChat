@@ -30,6 +30,20 @@ const GroupChat = ({ onBack }) => {
     }
   }, [currentGroup]);
 
+  useEffect(() => {
+    const handleReactionUpdate = () => {
+      if (currentGroup?._id) {
+        fetchGroupMessages(currentGroup._id);
+      }
+    };
+
+    window.addEventListener("messageReactionUpdated", handleReactionUpdate);
+
+    return () => {
+      window.removeEventListener("messageReactionUpdated", handleReactionUpdate);
+    };
+  }, [currentGroup?._id]);
+
   // Scroll to bottom when messages change
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -141,6 +155,7 @@ const GroupChat = ({ onBack }) => {
                 showSenderInfo={true}
                 showSeenStatus={false}
                 onImageClick={(imageUrl) => setPreviewImage(imageUrl)}
+                allowReactions={true}
               />
             );
           })

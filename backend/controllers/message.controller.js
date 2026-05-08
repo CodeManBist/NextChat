@@ -1,3 +1,4 @@
+import Group from "../models/group.model.js";
 import Message from "../models/message.model.js";
 
 const isDirectParticipant = (message, userId) => {
@@ -5,6 +6,18 @@ const isDirectParticipant = (message, userId) => {
     const receiverId = message.receiverId?.toString();
 
     return senderId === userId || receiverId === userId;
+};
+
+const canAccessMessage = async (message, userId) => {
+    if (message.groupId) {
+        const group = await Group.findById(message.groupId).select("members");
+
+        if (!group) return false;
+
+        return group.members.some((memberId) => memberId.toString() === userId.toString());
+    }
+
+    return isDirectParticipant(message, userId);
 };
 
 export const getMessages = async (req, res) => {
@@ -49,8 +62,8 @@ export const reactMessage = async (req, res) => {
             return res.status(404).json({ message: "Message not found" });
         }
 
-        if (!isDirectParticipant(message, userId)) {
-            return res.status(403).json({ message: "You can only react to your own private messages" });
+        if (!(await canAccessMessage(message, userId))) {
+            return res.status(403).json({ message: "You cannot react to this message" });
         }
 
         const existingReaction = message.reactions.find(
@@ -82,8 +95,8 @@ export const removeReaction = async (req, res) => {
             return res.status(404).json({ message: "Message not found" });
         }
 
-        if (!isDirectParticipant(message, userId)) {
-            return res.status(403).json({ message: "You can only remove reactions from your own private messages" });
+        if (!(await canAccessMessage(message, userId))) {
+            return res.status(403).json({ message: "You cannot remove reactions from this message" });
         }
 
         message.reactions = message.reactions.filter(

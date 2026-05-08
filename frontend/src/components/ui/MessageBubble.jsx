@@ -59,8 +59,6 @@ const MessageBubble = ({
     return reactionUserId?.toString() === currentUserId?.toString();
   });
 
-  const isPrivateMessage = !message.groupId;
-
   const openReactionPicker = () => {
     const buttonRect = reactionButtonRef.current?.getBoundingClientRect();
 
@@ -92,7 +90,7 @@ const MessageBubble = ({
   };
 
   const updateReaction = async (emoji) => {
-    if (!allowReactions || !isPrivateMessage || !message?._id) return;
+    if (!allowReactions || !message?._id) return;
 
     try {
       setReactionError("");
@@ -210,7 +208,7 @@ const MessageBubble = ({
             </div>
           </div>
 
-          {allowReactions && isPrivateMessage && (
+          {allowReactions && (
             <div className="relative mt-1 flex flex-wrap items-center justify-end gap-1.5 px-1">
               {reactionSummary.map((reaction) => (
                 <button
