@@ -8,7 +8,6 @@ const GroupsSection = ({ selectedGroup, setSelectedGroup, onSelectGroup }) => {
   const [search, setSearch] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { groups, fetchUserGroups, setCurrentGroup } = useContext(GroupContext);
-  const currentUserId = localStorage.getItem("userId");
 
   // Fetch groups on mount
   useEffect(() => {

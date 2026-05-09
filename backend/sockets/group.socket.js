@@ -24,7 +24,7 @@ export const setupGroupHandlers = (io, socket) => {
   });
 
   // Group typing indicator
-  socket.on("groupTyping", async ({ groupId, receiverId }) => {
+  socket.on("groupTyping", async ({ groupId }) => {
     if (!senderId || !groupId) return;
 
     try {

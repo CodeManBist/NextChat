@@ -21,7 +21,6 @@ const GroupProvider = ({ children }) => {
   const [groupMessages, setGroupMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const currentUserId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
   // Fetch all groups for current user

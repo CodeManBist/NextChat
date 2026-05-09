@@ -23,7 +23,7 @@ const CreateGroupModal = ({ onClose }) => {
         const data = await response.json();
         // Filter out current user
         setAllUsers(data.filter(u => u._id !== currentUserId));
-      } catch (err) {
+      } catch {
         setError("Failed to load users");
       }
     };
@@ -54,7 +54,7 @@ const CreateGroupModal = ({ onClose }) => {
     try {
       await createNewGroup(groupName, selectedMembers);
       onClose();
-    } catch (err) {
+    } catch {
       setError("Failed to create group");
     } finally {
       setLoading(false);

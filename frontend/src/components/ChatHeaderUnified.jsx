@@ -12,7 +12,6 @@ import Avatar from "./ui/Avatar";
  * @param {boolean} isGroup - Whether this is a group chat
  * @param {Function} onBack - Callback for back button
  * @param {Function} onMoreClick - Callback for more options button (groups)
- * @param {string} currentUsername - Current user's username
  * @param {boolean} isTyping - Show typing indicator (1-on-1 only)
  * @param {Array} onlineUsers - List of online user IDs (1-on-1 only)
  */
@@ -21,7 +20,6 @@ const ChatHeaderUnified = ({
   isGroup = false,
   onBack,
   onMoreClick,
-  currentUsername,
   isTyping = false,
   onlineUsers = [],
 }) => {

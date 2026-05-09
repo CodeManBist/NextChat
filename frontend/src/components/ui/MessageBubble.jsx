@@ -151,36 +151,80 @@ const MessageBubble = ({
                 : "bg-[#13263E]/95 text-gray-200 rounded-bl-md"
             }`}
           >
-            {/* File Support - Image */}
-            {message.fileUrl && message.fileType?.startsWith("image") && (
-              <div className="p-2 pb-0">
-                <button
-                  type="button"
-                  onClick={() => onImageClick?.(message.fileUrl)}
-                  className="block w-full overflow-hidden rounded-xl cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-sky-400/70"
-                >
-                  <img
-                    src={message.fileUrl}
-                    alt="preview"
-                    className="h-40 sm:h-64 w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
-                  />
-                </button>
-              </div>
-            )}
 
-            {/* File Support - Other */}
-            {message.fileUrl && !message.fileType?.startsWith("image") && (
-              <div className="p-2">
-                <a
-                  href={message.fileUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-300 underline text-sm"
-                >
-                  Download file
-                </a>
-              </div>
-            )}
+          {/* IMAGE */}
+          {message.fileUrl && message.fileType === "image" && (
+            <div className="p-2 pb-0">
+              <button
+                type="button"
+                onClick={() => onImageClick?.(message.fileUrl)}
+                className="block w-full overflow-hidden rounded-xl"
+              >
+                <img
+                  src={message.fileUrl}
+                  alt="preview"
+                  className="h-40 sm:h-64 w-full object-cover"
+                />
+              </button>
+            </div>
+          )}
+
+          {/* VIDEO */}
+          {message.fileUrl && message.fileType === "video" && (
+            <div className="p-2">
+              <video
+                controls
+                className="w-full rounded-xl max-h-80"
+              >
+                <source src={message.fileUrl} />
+              </video>
+            </div>
+          )}
+
+        {/* AUDIO */}
+        {message.fileUrl && message.fileType === "audio" && (
+          <div
+            className={`flex ${
+              isMe ? "justify-end" : "justify-start"
+            } p-2`}
+          >
+            <div
+              className={`
+                max-w-[280px]
+                rounded-2xl
+                overflow-visible
+                ${isMe ? "bg-[#2563eb]" : "bg-[#1e293b]"}
+              `}
+            >
+              <audio
+                controls
+                className="
+                  w-full
+                  min-w-[250px]
+                  h-12
+                "
+              >
+              <source
+                  src={message.fileUrl}
+                  type="audio/webm"
+                />
+              </audio>
+            </div>
+          </div>
+        )}
+          {/* DOCUMENT / OTHER FILE */}
+          {message.fileUrl && message.fileType === "file" && (
+            <div className="p-3">
+              <a
+                href={message.fileUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline text-sm"
+              >
+                Download File
+              </a>
+            </div>
+          )}
 
             {/* Message Text */}
             <div className="px-3 sm:px-4 py-2 sm:py-3">

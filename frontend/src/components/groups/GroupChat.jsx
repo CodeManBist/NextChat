@@ -9,7 +9,7 @@ import ImagePreviewModal from "../ui/ImagePreviewModal";
 import ChatInputArea from "../ui/ChatInputArea";
 
 const GroupChat = ({ onBack }) => {
-  const { currentGroup, groupMessages, setGroupMessages, fetchGroupMessages } = useContext(GroupContext);
+  const { currentGroup, groupMessages, fetchGroupMessages } = useContext(GroupContext);
   const [newMessage, setNewMessage] = useState("");
   const [typingUsers, setTypingUsers] = useState([]);
   const [showMembers, setShowMembers] = useState(false);

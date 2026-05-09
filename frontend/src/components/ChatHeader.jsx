@@ -3,7 +3,7 @@ import { FiVideo, FiPhone, FiMoreVertical, FiArrowLeft, FiSettings, FiMessageSqu
 import { FaUserCircle } from "react-icons/fa";
 import { ChatContext } from "../context/ChatContext";
 
-const ChatHeader = ({ selectedUser, currentUsername, isTyping, onBack, onlineUsers }) => {
+const ChatHeader = ({ selectedUser, isTyping, onBack }) => {
   const [showMenu, setShowMenu] = useState(false);
   const { onlineUsers: contextOnlineUsers } = useContext(ChatContext);
 

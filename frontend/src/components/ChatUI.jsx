@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import MessageBubble from "./ui/MessageBubble";
 import ImagePreviewModal from "./ui/ImagePreviewModal";
 import ChatInputArea from "./ui/ChatInputArea";
@@ -12,12 +12,9 @@ const ChatUI = ({
   sendMessage,
   handleTyping,
   currentUserId,
-  currentUsername,
   isEmpty,
-  isTyping,
   chatContainerRef,
   handleScroll,
-  onlineUsers,
 }) => {
   const [previewImage, setPreviewImage] = useState(null);
 

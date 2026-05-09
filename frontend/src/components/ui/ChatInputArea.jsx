@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { BsPlusLg, BsSendFill, BsEmojiSmile } from "react-icons/bs";
 import Input from "./Input";
 import Button from "./Button";

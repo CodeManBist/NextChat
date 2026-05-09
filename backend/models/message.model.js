@@ -22,6 +22,12 @@ const messageSchema = new mongoose.Schema(
     },
     fileType: {
       type: String,
+      enum: [
+        "image",
+        "video",
+        "file",
+        "audio",
+      ],
       default: null,
     },
     groupId: {
