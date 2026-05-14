@@ -1,7 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { FiMessageCircle, FiUsers, FiShield } from "react-icons/fi";
-import { FaUserCircle } from "react-icons/fa";
+import Hyperspeed from "../components/Hyperspeed";
+import HomeNavbar from "../components/navbar/HomeNavbar";
+import { hyperspeedPresets } from "../components/hyperspeedPresets";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ const Home = () => {
   const username = localStorage.getItem("username");
 
   const handleLogout = () => {
-    // Call server to clear cookie (if any) and then clear client state
+    // Call server to clear cookie (if any) and then clear client state.
     fetch("http://localhost:5000/api/users/logout", {
       method: "POST",
       credentials: "include",
@@ -23,113 +24,52 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#07111B] to-[#0a1929] flex flex-col">
-      {/* NAVIGATION */}
-      <nav className="bg-[#0F1E35] border-b border-[#1A3A5C] px-4 sm:px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <FiMessageCircle className="h-8 w-8 text-blue-400" />
-            <h1 className="text-white text-2xl sm:text-3xl font-bold">NextChat</h1>
-          </div>
+    <div style={{ width: "100vw", height: "100vh", position: "relative", backgroundColor: "#000000" }}>
+      <div className="absolute inset-0 z-1 pointer-events-none bg-linear-to-b from-black/85 via-black/45 to-black/92" />
+      <div className="absolute inset-0 z-1 pointer-events-none bg-[radial-gradient(circle_at_22%_24%,rgba(216,86,191,0.10),transparent_30%),radial-gradient(circle_at_78%_70%,rgba(3,179,195,0.10),transparent_34%)]" />
+      <div className="absolute top-0 left-0 right-0 z-10">
+        <HomeNavbar
+          isAuthenticated={isAuthenticated}
+          username={username}
+          onLogin={() => navigate("/login")}
+          onRegister={() => navigate("/register")}
+          onLogout={handleLogout}
+        />
+      </div>
+      <main className="absolute inset-0 z-10 flex items-center justify-center px-4 pt-20 pb-24">
+        <section className="w-full max-w-4xl text-center">
 
-          {/* Auth Buttons */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            {isAuthenticated ? (
-              <>
-                <span className="text-gray-300 text-sm sm:text-base hidden sm:inline">
-                  {username}
-                </span>
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-orange-400 flex items-center justify-center">
-                  <FaUserCircle className="h-7 w-7 sm:h-9 sm:w-9 text-white" />
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm sm:text-base transition"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => navigate("/login")}
-                  className="px-3 sm:px-4 py-2 text-gray-300 hover:text-white text-sm sm:text-base transition"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => navigate("/register")}
-                  className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm sm:text-base transition"
-                >
-                  Sign Up
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+          <h1 className="mx-auto max-w-4xl text-5xl font-black leading-[0.92] tracking-tight text-white sm:text-7xl lg:text-8xl">
+            Click and hold to see the real magic of hyperspeed.
+          </h1>
 
-      {/* MAIN CONTENT */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-8 sm:py-16">
-          <div className="max-w-4xl w-full text-center">
-          {/* Hero Section */}
-          <div className="mb-8 sm:mb-12">
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6">
-              Connect Instantly
-            </h2>
-            <p className="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto">
-              Real-time messaging made simple. Connect with friends and family instantly with our modern chat platform.
-            </p>
-          </div>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-white/50 sm:text-lg">
+            Premium motion, fast conversations, and a dark interface tuned to feel smooth instead of heavy.
+          </p>
 
-          {/* CTA Button */}
-          {isAuthenticated ? (
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <button
+              onClick={() => (isAuthenticated ? navigate("/chat") : navigate("/register"))}
+              className="min-w-37.5 rounded-2xl bg-white px-7 py-3.5 text-base font-semibold text-black shadow-[0_14px_30px_rgba(255,255,255,0.12)] transition hover:scale-[1.02] hover:bg-white/95"
+            >
+              {isAuthenticated ? "Open Chats" : "Get started"}
+            </button>
             <button
               onClick={() => navigate("/chat")}
-              className="mb-12 sm:mb-20 px-6 sm:px-8 py-3 sm:py-4 bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-base sm:text-lg font-semibold transition transform hover:scale-105"
+              className="min-w-37.5 rounded-2xl border border-white/10 bg-[#121219]/80 px-7 py-3.5 text-base font-medium text-white/70 shadow-[0_14px_30px_rgba(0,0,0,0.18)] backdrop-blur-md transition hover:border-white/15 hover:bg-[#17171f]/90 hover:text-white"
             >
-              Open Chats
+              Learn more
             </button>
-          ) : (
-            <button
-              onClick={() => navigate("/register")}
-              className="mb-12 sm:mb-20 px-6 sm:px-8 py-3 sm:py-4 bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-base sm:text-lg font-semibold transition transform hover:scale-105"
-            >
-              Get Started
-            </button>
-          )}
-
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {/* Feature 1 */}
-            <div className="p-6 sm:p-8 bg-[#0f1e2e] border border-[#1A3A5C] rounded-xl hover:border-blue-500 transition">
-              <FiMessageCircle className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-              <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">Instant Messaging</h3>
-              <p className="text-gray-400 text-sm sm:text-base">Send and receive messages in real-time with our fast and reliable platform.</p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="p-6 sm:p-8 bg-[#0f1e2e] border border-[#1A3A5C] rounded-xl hover:border-blue-500 transition">
-              <FiUsers className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-              <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">Connect With Friends</h3>
-              <p className="text-gray-400 text-sm sm:text-base">Build your network and stay connected with people who matter to you.</p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="p-6 sm:p-8 bg-[#0f1e2e] border border-[#1A3A5C] rounded-xl hover:border-blue-500 transition sm:col-span-2 lg:col-span-1">
-              <FiShield className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-              <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">Secure & Private</h3>
-              <p className="text-gray-400 text-sm sm:text-base">Your messages are encrypted and your privacy is our top priority.</p>
-            </div>
           </div>
-        </div>
+        </section>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-[#0F1E35] border-t border-[#1A3A5C] px-4 sm:px-6 py-4 sm:py-6">
-        <div className="max-w-7xl mx-auto text-center text-gray-400 text-xs sm:text-sm">
-          <p>&copy; 2026 NextChat. All rights reserved.</p>
+      <Hyperspeed
+        effectOptions={hyperspeedPresets.one}
+      />
+      <footer className="absolute bottom-0 left-0 right-0 z-10 border-t border-white/8 bg-[#09090d]/72 backdrop-blur-2xl px-4 sm:px-6 py-4 sm:py-5 shadow-[0_-10px_35px_rgba(0,0,0,0.22)]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 rounded-3xl border border-white/8 bg-white/3 px-4 py-3 text-xs sm:flex-row sm:items-center sm:justify-between sm:text-sm">
+          <p className="text-white/65">&copy; 2026 NextChat.</p>
+          <p className="text-white/35">Built for real-time conversations.</p>
         </div>
       </footer>
     </div>
