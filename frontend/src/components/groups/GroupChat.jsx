@@ -106,7 +106,7 @@ const GroupChat = ({ onBack }) => {
 
   if (!currentGroup) {
     return (
-      <div className="h-full flex items-center justify-center text-gray-400">
+      <div className="h-full flex items-center justify-center text-white/45">
         Select a group to start chatting
       </div>
     );
@@ -118,7 +118,7 @@ const GroupChat = ({ onBack }) => {
     .join(", ");
 
   return (
-    <div className="h-full w-full bg-[#07111B] overflow-hidden relative flex flex-col">
+    <div className="theme-shell h-full w-full overflow-hidden relative flex flex-col">
       {/* Unified Header - Works for both 1-on-1 and groups */}
       <ChatHeaderUnified
         selectedUser={currentGroup}
@@ -129,8 +129,8 @@ const GroupChat = ({ onBack }) => {
 
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-25 -left-25 h-125 w-125 rounded-full bg-blue-500/12 blur-3xl" />
-        <div className="absolute -bottom-37.5 -right-25 h-125 w-125 rounded-full bg-sky-500/10 blur-3xl" />
+        <div className="absolute -top-25 -left-25 h-125 w-125 rounded-full bg-white/8 blur-3xl" />
+        <div className="absolute -bottom-37.5 -right-25 h-125 w-125 rounded-full bg-white/5 blur-3xl" />
       </div>
 
       {/* Messages */}
@@ -164,7 +164,7 @@ const GroupChat = ({ onBack }) => {
 
       {/* Typing Indicator */}
       {typingUsersList && (
-        <div className="relative z-10 px-3 sm:px-4 pb-2 text-xs text-gray-400 italic">
+        <div className="relative z-10 px-3 sm:px-4 pb-2 text-xs text-white/45 italic">
           {typingUsersList} is typing...
         </div>
       )}

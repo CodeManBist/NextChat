@@ -62,14 +62,14 @@ const CreateGroupModal = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#0F1E35] rounded-xl border border-[#1A3A5C] max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="theme-panel-strong rounded-[28px] max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#1A3A5C] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-white/8 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-white">Create Group</h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-[#1a3a5c] rounded-lg transition text-gray-400"
+            className="p-1 hover:bg-white/6 rounded-xl transition text-white/45"
           >
             <FiX size={24} />
           </button>
@@ -79,7 +79,7 @@ const CreateGroupModal = ({ onClose }) => {
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {/* Group Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-white/70 mb-2">
               Group Name
             </label>
             <input
@@ -87,13 +87,13 @@ const CreateGroupModal = ({ onClose }) => {
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               placeholder="Enter group name"
-              className="w-full px-4 py-2 bg-[#0D2038] border border-[#1A3A5C] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition"
+              className="theme-input w-full px-4 py-3 rounded-2xl"
             />
           </div>
 
           {/* Members Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-white/70 mb-2">
               Select Members ({selectedMembers.length})
             </label>
             <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -101,10 +101,10 @@ const CreateGroupModal = ({ onClose }) => {
                 <div
                   key={user._id}
                   onClick={() => handleToggleMember(user._id)}
-                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
+                  className={`flex items-center gap-3 p-3 rounded-2xl cursor-pointer transition border ${
                     selectedMembers.includes(user._id)
-                      ? "bg-blue-600/20 border border-blue-500"
-                      : "bg-[#0D2038] border border-transparent hover:border-[#1A3A5C]"
+                      ? "bg-white/8 border-white/10"
+                      : "bg-white/3 border-transparent hover:border-white/8"
                   }`}
                 >
                   <img
@@ -114,11 +114,11 @@ const CreateGroupModal = ({ onClose }) => {
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-white truncate font-medium">{user.username}</p>
-                    <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                    <p className="text-xs text-white/40 truncate">{user.email}</p>
                   </div>
 
                   {selectedMembers.includes(user._id) && (
-                    <FiCheck size={20} className="text-blue-400 shrink-0" />
+                    <FiCheck size={20} className="text-white shrink-0" />
                   )}
                 </div>
               ))}
@@ -127,24 +127,24 @@ const CreateGroupModal = ({ onClose }) => {
 
           {/* Error */}
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500 rounded-lg text-red-400 text-sm">
+            <div className="p-3 bg-red-500/10 border border-red-500/40 rounded-2xl text-red-300 text-sm">
               {error}
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="border-t border-[#1A3A5C] p-4 flex gap-3">
+        <div className="border-t border-white/8 p-4 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition font-medium"
+            className="flex-1 px-4 py-3 theme-button-secondary rounded-2xl transition font-medium"
           >
             Cancel
           </button>
           <button
             onClick={handleCreateGroup}
             disabled={loading}
-            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium disabled:opacity-50"
+            className="flex-1 px-4 py-3 theme-button-primary rounded-2xl transition font-medium disabled:opacity-50"
           >
             {loading ? "Creating..." : "Create"}
           </button>

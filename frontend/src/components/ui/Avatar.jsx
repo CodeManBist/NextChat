@@ -38,7 +38,7 @@ const Avatar = ({
   if (isGroup) {
     return (
       <div
-        className={`${sizeClasses[size]} rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold shrink-0 ${className}`}
+        className={`${sizeClasses[size]} rounded-full bg-linear-to-br from-[#1c1c22] to-[#2c2732] border border-white/10 flex items-center justify-center text-white font-semibold shrink-0 ${className}`}
       >
         {getInitials(name)}
       </div>

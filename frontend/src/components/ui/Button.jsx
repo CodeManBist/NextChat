@@ -1,9 +1,9 @@
 import React from 'react';
 
 const variants = {
-  primary: 'bg-blue-600 hover:bg-blue-700 text-white',
-  ghost: 'bg-transparent hover:bg-[#1a3a5c] text-gray-300',
-  success: 'bg-[#1ecf8b] hover:bg-[#17b97a] text-black'
+  primary: 'theme-button-primary',
+  ghost: 'theme-button-secondary',
+  success: 'bg-white text-black hover:bg-white/95'
 };
 
 const sizes = {
@@ -17,7 +17,7 @@ const Button = ({ variant='primary', size='md', children, className='', icon, ..
   const s = sizes[size] || sizes.md;
   return (
     <button className={`${v} ${s} ${className} inline-flex items-center gap-2 justify-center`} {...rest}>
-      {icon && <span className="flex-shrink-0">{icon}</span>}
+      {icon && <span className="shrink-0">{icon}</span>}
       <span>{children}</span>
     </button>
   );

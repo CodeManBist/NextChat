@@ -4,10 +4,10 @@ import { FaUserCircle } from "react-icons/fa";
 
 const HomeNavbar = ({ isAuthenticated, username, onLogin, onRegister, onLogout }) => {
   return (
-    <nav className="border-b border-white/8 bg-[#09090d]/70 px-4 sm:px-6 py-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
-      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-3xl border border-white/8 bg-white/3 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+    <nav className="border-b border-white/8 bg-black/35 px-4 sm:px-6 py-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
+      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-3xl border border-white/8 bg-white/5 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/4">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/6">
             <FiMessageCircle className="h-6 w-6 text-white" />
           </div>
           <div className="leading-tight">
@@ -24,8 +24,9 @@ const HomeNavbar = ({ isAuthenticated, username, onLogin, onRegister, onLogout }
                 <FaUserCircle className="h-7 w-7 sm:h-9 sm:w-9 text-white" />
               </div>
               <button
+                type="button"
                 onClick={onLogout}
-                className="rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm font-medium text-white/80 transition hover:border-white/15 hover:bg-white/8 hover:text-white"
+                className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm font-medium text-white/80 transition hover:border-white/15 hover:bg-white/10 hover:text-white"
               >
                 Logout
               </button>
@@ -33,12 +34,14 @@ const HomeNavbar = ({ isAuthenticated, username, onLogin, onRegister, onLogout }
           ) : (
             <>
               <button
+                type="button"
                 onClick={onLogin}
                 className="rounded-full px-4 py-2 text-sm font-medium text-white/60 transition hover:text-white"
               >
                 Login
               </button>
               <button
+                type="button"
                 onClick={onRegister}
                 className="rounded-full border border-white/10 bg-white px-4 py-2 text-sm font-semibold text-black transition hover:scale-[1.01] hover:bg-white/95"
               >

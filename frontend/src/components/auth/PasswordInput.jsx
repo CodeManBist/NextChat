@@ -9,13 +9,13 @@ const PasswordInput = ({
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <label className="text-sm text-gray-300">
+        <label className="text-sm text-white/70">
           Password
         </label>
 
         <button
           type="button"
-          className="text-xs text-green-400"
+          className="text-xs text-white/55 hover:text-white transition"
         >
           Forgot Password?
         </button>
@@ -27,13 +27,13 @@ const PasswordInput = ({
           placeholder="Enter password"
           value={value}
           onChange={onChange}
-          className="w-full bg-[#18241D] border border-gray-700 rounded-lg px-4 py-3 text-white outline-none focus:border-green-400"
+          className="theme-input w-full rounded-2xl px-4 py-3 pr-12"
         />
 
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-4 top-3 text-gray-400"
+          className="absolute right-4 top-3 text-white/40 hover:text-white transition"
         >
           👁
         </button>

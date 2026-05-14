@@ -42,7 +42,7 @@ const ChatsSection = ({ setSelectedUser, selectedUser }) => {
   );
 
   return (
-    <div className="flex flex-col h-full bg-[#0F1E35] text-white">
+    <div className="flex flex-col h-full theme-panel text-white">
 
       <div className="px-4 pb-4">
 
@@ -66,8 +66,8 @@ const ChatsSection = ({ setSelectedUser, selectedUser }) => {
               onClick={() => setSelectedUser(user)}
               className={`flex items-center gap-4 px-4 py-4 cursor-pointer transition duration-200 ${
                 selectedUser?._id === user._id
-                  ? "bg-[#1a3a5c]"
-                  : "hover:bg-[#1a2f4a]"
+                  ? "bg-white/8"
+                  : "hover:bg-white/4"
               }`}
             >
 
@@ -97,19 +97,19 @@ const ChatsSection = ({ setSelectedUser, selectedUser }) => {
                       {currentUserId === user._id ? "You": user.username}
                     </h2>
 
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-white/35">
                     12:45 PM
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-400 truncate mt-1">
+                <p className="text-sm text-white/45 truncate mt-1">
                   Click to start conversation
                 </p>
               </div>
             </div>
           ))
         ) : (
-          <div className="h-full flex items-center justify-center text-gray-500">
+          <div className="h-full flex items-center justify-center text-white/35">
             No users found
           </div>
         )}

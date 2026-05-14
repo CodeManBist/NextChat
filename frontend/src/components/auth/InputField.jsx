@@ -9,7 +9,7 @@ const InputField = ({
 }) => {
   return (
     <div>
-      <label className="block text-sm text-gray-300 mb-2">
+      <label className="block text-sm text-white/70 mb-2">
         {label}
       </label>
 
@@ -18,7 +18,7 @@ const InputField = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full bg-[#18241D] border border-gray-700 rounded-lg px-4 py-3 text-white outline-none focus:border-green-400"
+        className="theme-input w-full rounded-2xl px-4 py-3"
       />
     </div>
   );

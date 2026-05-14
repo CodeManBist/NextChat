@@ -397,23 +397,23 @@ const Chat = () => {
   const showChatsPrompt = isChatsMenuActive && !selectedUser;
 
   const EmptyStatePanel = ({ message }) => (
-    <div className="h-full w-full relative overflow-hidden bg-[#07111B] flex items-center justify-center px-4 sm:px-6">
+    <div className="theme-shell h-full w-full relative overflow-hidden flex items-center justify-center px-4 sm:px-6">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-sky-500/10 blur-3xl" />
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-white/8 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-white/5 blur-3xl" />
       </div>
 
-      <div className="relative z-10 w-full max-w-xl rounded-2xl border border-[#1A3A5C] bg-[#0F1E35]/75 backdrop-blur-md p-6 sm:p-8 text-center shadow-2xl">
-        <div className="mx-auto mb-4 h-14 w-14 rounded-2xl bg-[#1A3A5C]/70 border border-[#2A517F] flex items-center justify-center">
-          <PanelIcon className="h-7 w-7 text-blue-300" />
+      <div className="relative z-10 w-full max-w-xl theme-panel-strong rounded-[28px] p-6 sm:p-8 text-center">
+        <div className="mx-auto mb-4 h-14 w-14 rounded-2xl bg-white/6 border border-white/8 flex items-center justify-center">
+          <PanelIcon className="h-7 w-7 text-white" />
         </div>
-        <p className="text-blue-300 text-sm font-semibold tracking-wide uppercase mb-2">
+        <p className="text-white text-sm font-semibold tracking-[0.28em] uppercase mb-2">
           {currentPanelVisual.title}
         </p>
-        <p className="text-base sm:text-lg text-[#B7C8D9] font-medium">
+        <p className="text-base sm:text-lg text-white font-medium">
           {message}
         </p>
-        <p className="mt-2 text-sm text-[#8EA7A3]">
+        <p className="mt-2 text-sm text-white/45">
           {showChatsPrompt
             ? panelVisuals.chats.helper
             : currentPanelVisual.helper}

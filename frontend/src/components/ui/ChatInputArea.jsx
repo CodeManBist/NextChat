@@ -47,7 +47,7 @@ const ChatInputArea = ({
   };
 
   return (
-    <div className="relative z-10 px-2 sm:px-3 py-2 sm:py-3 bg-[#0F1E35]/90 border-t border-[#1A3A5C] backdrop-blur-xl">
+    <div className="relative z-10 px-2 sm:px-3 py-2 sm:py-3 theme-panel border-t theme-border backdrop-blur-2xl">
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Hidden File Input */}
         <input
@@ -61,7 +61,7 @@ const ChatInputArea = ({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="shrink-0 p-2 hover:bg-[#1a3a5c] rounded-lg transition text-gray-400 hover:text-white"
+          className="shrink-0 p-2 rounded-xl transition text-white/45 hover:text-white hover:bg-white/6"
           disabled={disabled}
         >
           <BsPlusLg size={20} />
@@ -92,7 +92,7 @@ const ChatInputArea = ({
         {showEmoji && (
           <button
             type="button"
-            className="shrink-0 p-2 hover:bg-[#1a3a5c] rounded-lg transition text-gray-400 hover:text-white"
+            className="shrink-0 p-2 rounded-xl transition text-white/45 hover:text-white hover:bg-white/6"
             onClick={() => setShowPicker((prev) => !prev)}
           >
             <BsEmojiSmile size={20} />
@@ -103,7 +103,7 @@ const ChatInputArea = ({
         <button
           onClick={onSendMessage}
           disabled={!newMessage.trim() || disabled}
-          className="shrink-0 p-2 hover:bg-blue-600 bg-blue-500 rounded-lg transition text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          className="shrink-0 rounded-xl bg-white px-3 py-3 text-black transition hover:scale-[1.02] hover:bg-white/95 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <BsSendFill size={18} />
         </button>

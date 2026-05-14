@@ -29,15 +29,15 @@ const AppLayout = ({
   const showMobileHeader = !activeMenu;
 
   return (
-    <div className="h-screen bg-[#07111B] flex flex-col lg:flex-row overflow-hidden">
+    <div className="theme-shell h-screen flex flex-col lg:flex-row overflow-hidden">
 
       {/* MOBILE HEADER */}
       {showMobileHeader && (
-        <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#0D2038]">
-          <h1 className="text-white text-xl font-bold">Chat</h1>
+        <div className="lg:hidden flex items-center justify-between px-4 py-3 theme-panel border-b theme-border">
+          <h1 className="text-white text-xl font-semibold tracking-tight">Chat</h1>
           <button
             onClick={toggleSidebar}
-            className="text-white p-2 hover:bg-[#1a3a5c] rounded-lg transition"
+            className="text-white/80 p-2 hover:bg-white/8 rounded-xl transition"
           >
             {sidebarOpen ? <HiX size={24} /> : <HiMenu size={24} />}
           </button>
@@ -72,7 +72,7 @@ const AppLayout = ({
       )}
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 bg-[#07111B] overflow-hidden">
+      <div className="flex-1 theme-shell overflow-hidden">
         {children}
       </div>
 

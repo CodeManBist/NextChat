@@ -140,15 +140,15 @@ const MessageBubble = ({
         <div className="relative">
           {/* Sender Name (for groups) */}
           {showSenderInfo && !isMe && (
-            <p className="text-xs text-gray-400 mb-1 px-3">{senderName}</p>
+            <p className="text-xs text-white/40 mb-1 px-3">{senderName}</p>
           )}
 
           {/* Message Bubble */}
           <div
             className={`rounded-2xl overflow-hidden shadow-2xl border border-white/5 ${
               isMe
-                ? "bg-[#1E5EC7] text-white rounded-br-md"
-                : "bg-[#13263E]/95 text-gray-200 rounded-bl-md"
+                ? "bg-white text-black rounded-br-md"
+                : "bg-white/5 text-white rounded-bl-md"
             }`}
           >
 
@@ -190,7 +190,7 @@ const MessageBubble = ({
           >
             <div
               className={`
-                max-w-[280px]
+                max-w-70
                 rounded-2xl
                 overflow-visible
                 ${isMe ? "bg-[#2563eb]" : "bg-[#1e293b]"}
@@ -200,7 +200,7 @@ const MessageBubble = ({
                 controls
                 className="
                   w-full
-                  min-w-[250px]
+                  min-w-62.5
                   h-12
                 "
               >
@@ -219,7 +219,7 @@ const MessageBubble = ({
                 href={message.fileUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue-300 underline text-sm"
+                className="text-cyan-300 underline text-sm"
               >
                 Download File
               </a>
@@ -233,16 +233,16 @@ const MessageBubble = ({
               {/* Timestamp & Status */}
               <div
                 className={`text-[11px] mt-2 flex justify-end ${
-                  isMe ? "text-white/70" : "text-gray-400"
+                  isMe ? "text-black/55" : "text-white/45"
                 }`}
               >
                 {isMe && showSeenStatus ? (
                   <div className="flex items-center gap-1.5">
                     <span>{messageTime}</span>
                     {message.seen ? (
-                      <BsCheck2All className="text-[#7dd3fc]" size={14} />
+                      <BsCheck2All className="text-cyan-300" size={14} />
                     ) : (
-                      <BsCheck className="text-white/60" size={14} />
+                      <BsCheck className="text-black/45" size={14} />
                     )}
                   </div>
                 ) : (
@@ -261,8 +261,8 @@ const MessageBubble = ({
                   onClick={() => updateReaction(reaction.emoji)}
                   className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs shadow-lg transition ${
                     reaction.reactedByMe
-                      ? "border-sky-300/70 bg-sky-400/20 text-white"
-                      : "border-white/10 bg-white/5 text-gray-200 hover:bg-white/10"
+                      ? "border-white/15 bg-white/15 text-white"
+                      : "border-white/10 bg-white/5 text-white/75 hover:bg-white/10"
                   }`}
                   aria-label={`React with ${reaction.emoji}`}
                 >
@@ -275,7 +275,7 @@ const MessageBubble = ({
                 ref={reactionButtonRef}
                 type="button"
                 onClick={openReactionPicker}
-                className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-gray-200 opacity-0 shadow-lg transition group-hover:opacity-100 hover:bg-white/10"
+                className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-white/70 opacity-0 shadow-lg transition group-hover:opacity-100 hover:bg-white/10"
                 aria-label="Open emoji reactions"
               >
                 +

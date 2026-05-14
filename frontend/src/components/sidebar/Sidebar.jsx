@@ -41,12 +41,12 @@ const Sidebar = ({ activeMenu, setActiveMenu, selectedUser, setSelectedUser, onS
   // MAIN MENU
   if (!activeMenu) {
     return (
-    <div className="relative w-full h-full bg-linear-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] p-4 flex flex-col">
-      <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-blue-400 via-transparent to-transparent opacity-80" />
+    <div className="relative w-full h-full theme-panel border-r theme-border p-4 flex flex-col">
+      <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-white/25 via-transparent to-transparent opacity-60" />
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => navigate("/")} className="flex items-center gap-2">
-            <FiMessageCircle className="text-blue-400 w-6 h-6" />
-            <span className="text-white font-semibold text-lg">NextChat</span>
+            <FiMessageCircle className="text-white w-6 h-6" />
+            <span className="text-white font-semibold text-lg tracking-tight">NextChat</span>
           </button>
 
         </div>
@@ -58,7 +58,7 @@ const Sidebar = ({ activeMenu, setActiveMenu, selectedUser, setSelectedUser, onS
               onClick={() => {
                 setActiveMenu(menu.id);
               }}
-              className="flex items-center gap-4 px-4 py-3 rounded-xl text-gray-300 hover:bg-[#1a3a5c] cursor-pointer transition"
+              className="flex items-center gap-4 px-4 py-3 rounded-2xl text-white/68 hover:bg-white/6 cursor-pointer transition"
             >
               {menu.icon}
               <span className="inline">{menu.label}</span>
@@ -72,11 +72,11 @@ const Sidebar = ({ activeMenu, setActiveMenu, selectedUser, setSelectedUser, onS
    // CHATS PAGE
 if (activeMenu === "chats") {
   return (
-    <div className="relative w-full h-full bg-linear-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] flex flex-col">
-      <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-blue-400 via-transparent to-transparent opacity-80" />
+    <div className="relative w-full h-full theme-panel border-r theme-border flex flex-col">
+      <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-white/25 via-transparent to-transparent opacity-60" />
 
       {/* Header */}
-      <div className="h-16 sm:h-20 flex items-center px-3 sm:px-5 border-b border-[#1A3A5C] bg-[#0D2038]">
+      <div className="h-16 sm:h-20 flex items-center px-3 sm:px-5 border-b border-white/8 bg-white/2">
         <div className="flex items-center gap-3">
         <FiArrowLeft
           size={22}
@@ -91,7 +91,7 @@ if (activeMenu === "chats") {
           }}
         />
 
-        <h2 className="text-xl sm:text-2xl font-semibold text-blue-400">
+        <h2 className="text-xl sm:text-2xl font-semibold text-white">
           Chats
         </h2>
         </div>
@@ -115,8 +115,8 @@ if (activeMenu === "chats") {
   // STATUS PAGE
   if (activeMenu === "status") {
     return (
-<div className="relative w-full h-full bg-linear-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] p-4 flex flex-col">
-      <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-blue-400 via-transparent to-transparent opacity-80" />
+<div className="relative w-full h-full theme-panel border-r theme-border p-4 flex flex-col">
+  <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-white/25 via-transparent to-transparent opacity-60" />
         <div className="flex items-center gap-3 mb-6">
           <FiArrowLeft
             size={22}
@@ -124,12 +124,12 @@ if (activeMenu === "chats") {
             onClick={() => setActiveMenu(null)}
           />
 
-          <h2 className="text-xl sm:text-2xl font-semibold text-blue-400">
+          <h2 className="text-xl sm:text-2xl font-semibold text-white">
             Status
           </h2>
         </div>
 
-        <div className="text-gray-400 flex-1 flex items-center justify-center">
+        <div className="theme-text-muted flex-1 flex items-center justify-center">
           
         </div>
       </div>
@@ -139,11 +139,11 @@ if (activeMenu === "chats") {
   // GROUPS PAGE
   if (activeMenu === "groups") {
     return (
-      <div className="relative w-full h-full bg-linear-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] flex flex-col">
-        <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-blue-400 via-transparent to-transparent opacity-80" />
+      <div className="relative w-full h-full theme-panel border-r theme-border flex flex-col">
+        <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-white/25 via-transparent to-transparent opacity-60" />
 
         {/* Header */}
-        <div className="h-16 sm:h-20 flex items-center px-3 sm:px-5 border-b border-[#1A3A5C] bg-[#0D2038]">
+        <div className="h-16 sm:h-20 flex items-center px-3 sm:px-5 border-b border-white/8 bg-white/2">
           <div className="flex items-center gap-3">
             <FiArrowLeft
               size={22}
@@ -151,7 +151,7 @@ if (activeMenu === "chats") {
               onClick={() => setActiveMenu(null)}
             />
 
-            <h2 className="text-xl sm:text-2xl font-semibold text-blue-400">
+            <h2 className="text-xl sm:text-2xl font-semibold text-white">
               Groups
             </h2>
           </div>
@@ -174,8 +174,8 @@ if (activeMenu === "chats") {
   // SETTINGS PAGE
   if (activeMenu === "settings") {
     return (
-<div className="relative w-full h-full bg-linear-to-b from-[#0F1E35] to-[#0C2740] border-r border-[#12324a] p-4 flex flex-col">
-      <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-blue-400 via-transparent to-transparent opacity-80" />
+<div className="relative w-full h-full theme-panel border-r theme-border p-4 flex flex-col">
+  <div className="absolute right-0 top-0 h-full w-1 bg-linear-to-b from-white/25 via-transparent to-transparent opacity-60" />
         <div className="flex items-center gap-3 mb-6">
           <FiArrowLeft
             size={22}
@@ -183,12 +183,12 @@ if (activeMenu === "chats") {
             onClick={() => setActiveMenu(null)}
           />
 
-          <h2 className="text-xl sm:text-2xl font-semibold text-blue-400">
+          <h2 className="text-xl sm:text-2xl font-semibold text-white">
             Settings
           </h2>
         </div>
 
-        <div className="text-gray-400 flex-1 flex items-center justify-center">
+        <div className="theme-text-muted flex-1 flex items-center justify-center">
           
         </div>
       </div>

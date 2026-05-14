@@ -75,14 +75,14 @@ const Login = () => {
 
         <button
           type="submit"
-          className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold py-3 rounded-lg transition"
+          className="w-full theme-button-primary font-semibold py-3 rounded-2xl transition"
         >
           Login →
         </button>
 
       </form>
       {errorMessage && (
-        <p className="text-red-500 text-sm mt-2 text-center">{errorMessage}</p>
+        <p className="text-red-300 text-sm mt-2 text-center">{errorMessage}</p>
       )}
     </AuthCard>
   );

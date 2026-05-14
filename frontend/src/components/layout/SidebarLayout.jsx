@@ -10,7 +10,7 @@ const SidebarLayout = ({
 }) => {
 
   return (
-    <div className="h-full w-full bg-[#07141B] flex">
+    <div className="theme-shell h-full w-full flex">
       <Sidebar
         activeMenu={activeMenu}
         setActiveMenu={setActiveMenu}
