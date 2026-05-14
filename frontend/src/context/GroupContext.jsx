@@ -13,6 +13,7 @@ export const GroupContext = createContext({
   fetchUserGroups: () => {},
   createNewGroup: () => {},
   fetchGroupMessages: () => {},
+  promoteGroupAdmin: () => {},
 });
 
 const GroupProvider = ({ children }) => {
@@ -193,6 +194,34 @@ const GroupProvider = ({ children }) => {
     }
   };
 
+  // Transfer group admin
+  const promoteGroupAdmin = async (groupId, adminId) => {
+    if (!token) return;
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/groups/${groupId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ adminId }),
+      });
+
+      if (!response.ok) throw new Error("Failed to transfer admin");
+
+      const data = await response.json();
+      setGroups(groups.map(g => g._id === groupId ? data.group : g));
+      if (currentGroup?._id === groupId) {
+        setCurrentGroup(data.group);
+      }
+      return data.group;
+    } catch (err) {
+      setError(err.message);
+      console.error("Error transferring admin:", err);
+    }
+  };
+
   // Delete group
   const deleteGroup = async (groupId) => {
     if (!token) return;
@@ -279,6 +308,7 @@ const GroupProvider = ({ children }) => {
     addMemberToGroup,
     removeMemberFromGroup,
     updateGroupName,
+    promoteGroupAdmin,
     deleteGroup,
     leaveGroup,
   };

@@ -216,7 +216,7 @@ export const removeMemberFromGroup = async (req, res) => {
 export const updateGroup = async (req, res) => {
   try {
     const { groupId } = req.params;
-    const { name } = req.body;
+    const { name, adminId } = req.body;
     const userId = req.user.id;
 
     const group = await Group.findById(groupId);
@@ -232,6 +232,16 @@ export const updateGroup = async (req, res) => {
 
     if (name && name.trim()) {
       group.name = name.trim();
+    }
+
+    if (adminId && adminId !== group.admin.toString()) {
+      const isMember = group.members.some(member => member.toString() === adminId);
+
+      if (!isMember) {
+        return res.status(400).json({ message: "New admin must be a group member" });
+      }
+
+      group.admin = adminId;
     }
 
     await group.save();

@@ -192,10 +192,6 @@ const GroupChat = ({ onBack }) => {
       {/* Members Modal */}
       {showMembers && (
         <GroupMembers
-          onAddMemberClick={() => {
-            // Handle add member
-            setShowMembers(false);
-          }}
           onClose={() => setShowMembers(false)}
         />
       )}
