@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { FiVideo, FiPhone, FiMoreVertical, FiArrowLeft, FiSettings, FiMessageSquare } from "react-icons/fi";
 import { FaUserCircle } from "react-icons/fa";
 import { ChatContext } from "../context/ChatContext";
+import { useCall } from "../context/CallContext";
 import Avatar from "./ui/Avatar";
 
 /**
@@ -22,9 +23,12 @@ const ChatHeaderUnified = ({
   onMoreClick,
   isTyping = false,
   onlineUsers = [],
+  currentUserId,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const { onlineUsers: contextOnlineUsers } = useContext(ChatContext);
+
+  const { callUser, inCall, outgoingCall } = useCall();
 
   if (!selectedUser) return null;
 
@@ -88,9 +92,18 @@ const ChatHeaderUnified = ({
       <div className="flex items-center gap-2 sm:gap-4 shrink-0">
         {/* Phone Call - 1-on-1 only */}
         {!isGroup && (
-          <button className="text-white/55 hover:text-white hover:bg-white/6 p-2 rounded-xl transition hidden sm:inline-flex">
-            <FiPhone className="h-5 w-5" />
-          </button>
+          (() => {
+            const disabled = inCall || outgoingCall || selectedUser._id === currentUserId;
+            return (
+              <button
+                onClick={() => { if (!disabled) callUser?.(selectedUser._id); }}
+                disabled={disabled}
+                aria-disabled={disabled}
+                className={`text-white/55 p-2 rounded-xl transition hidden sm:inline-flex ${disabled ? 'opacity-40 cursor-not-allowed' : 'hover:text-white hover:bg-white/6'}`}>
+                <FiPhone className="h-5 w-5" />
+              </button>
+            );
+          })()
         )}
 
         {/* Video Call - 1-on-1 only */}

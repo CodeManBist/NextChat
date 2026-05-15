@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import AppLayout from "../components/layout/AppLayout";
 import ChatHeaderUnified from "../components/ChatHeaderUnified";
+import AudioCall from "../components/AudioCall";
+import { useCall } from "../context/CallContext";
+import IncomingCallModal from "../components/ui/IncomingCallModal";
+import OutgoingCallModal from "../components/ui/OutgoingCallModal";
+import InCallControls from "../components/ui/InCallControls";
 import socket from "../socket";
 import ChatUI from "../components/ChatUI";
 import GroupChat from "../components/groups/GroupChat";
@@ -27,6 +32,7 @@ const Chat = () => {
   const currentUserId = localStorage.getItem("userId");
   const currentUsername = localStorage.getItem("username");
   const { setCurrentGroup } = useContext(GroupContext);
+  const { remoteStream } = useCall();
 
   // Typing indicator with debouncing for 1-on-1 chats
   const { handleTyping } = useTypingIndicator(
@@ -439,6 +445,9 @@ const Chat = () => {
       ) : (
         // Individual Chat View
         <div className="h-full w-full flex flex-col overflow-hidden">
+          <IncomingCallModal />
+          <OutgoingCallModal />
+          <InCallControls />
           {/* Unified Chat Header - Works for both 1-on-1 and groups */}
           <ChatHeaderUnified
             selectedUser={selectedUser}
@@ -447,7 +456,11 @@ const Chat = () => {
             currentUsername={currentUsername}
             isTyping={isTyping}
             onlineUsers={onlineUsers}
+            currentUserId={currentUserId}
           />
+
+          {/* Remote audio element (plays remote stream when in a call) */}
+          <AudioCall remoteStream={remoteStream} />
 
           {/* Chat Messages Area */}
           <ChatUI

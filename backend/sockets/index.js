@@ -1,6 +1,7 @@
 import { setupPresenceHandlers } from "./presense.socket.js";
 import { setupChatHandlers } from "./chat.socket.js";
 import { setupGroupHandlers } from "./group.socket.js";
+import setupCallHandlers from "./callSocket.js";
 
 /**
  * Initialize all Socket.IO event handlers
@@ -14,6 +15,7 @@ export const initializeSocketHandlers = (io) => {
     setupPresenceHandlers(io, socket);
     setupChatHandlers(io, socket);
     setupGroupHandlers(io, socket);
+    setupCallHandlers(io, socket);
   });
 };
 
