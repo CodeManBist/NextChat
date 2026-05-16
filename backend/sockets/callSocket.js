@@ -23,7 +23,7 @@ export const setupCallHandlers = (io, socket) => {
       // Check if caller is already in a call
       const existingCallerCall = await redisClient.get(`active_call:${userId}`);
       if (existingCallerCall) {
-        const callerSockets = await getUserSockets(userId);
+        const callerSockets = await getUserSockets(io, userId);
         (callerSockets || []).forEach((sid) => {
           io.to(sid).emit("user-busy", { reason: "caller-in-call", callId: existingCallerCall });
         });
@@ -33,14 +33,14 @@ export const setupCallHandlers = (io, socket) => {
       // Check if callee is already in a call
       const existing = await redisClient.get(`active_call:${to}`);
       if (existing) {
-        const callerSockets = await getUserSockets(userId);
+        const callerSockets = await getUserSockets(io, userId);
         (callerSockets || []).forEach((sid) => {
           io.to(sid).emit("user-busy", { reason: "callee-busy", callId: existing });
         });
         return;
       }
 
-      const targets = await getUserSockets(to);
+      const targets = await getUserSockets(io, to);
       if (!targets || targets.length === 0) return;
       targets.forEach((socketId) => {
         io.to(socketId).emit("incoming-call", { from: userId, callId, offer });
@@ -63,7 +63,7 @@ export const setupCallHandlers = (io, socket) => {
           console.error('Failed to mark active call in Redis', e);
         }
       }
-      const targets = await getUserSockets(to);
+      const targets = await getUserSockets(io, to);
       if (!targets || targets.length === 0) return;
       targets.forEach((socketId) => {
         io.to(socketId).emit("call-answered", { from: userId, callId, answer });
@@ -77,7 +77,7 @@ export const setupCallHandlers = (io, socket) => {
   socket.on("ice-candidate", async ({ to, candidate, callId } = {}) => {
     try {
       if (!to || !candidate) return;
-      const targets = await getUserSockets(to);
+      const targets = await getUserSockets(io, to);
       if (!targets || targets.length === 0) return;
       targets.forEach((socketId) => {
         io.to(socketId).emit("ice-candidate", { from: userId, callId, candidate });
@@ -91,7 +91,7 @@ export const setupCallHandlers = (io, socket) => {
   socket.on("end-call", async ({ to, callId } = {}) => {
     try {
       if (!to) return;
-      const targets = await getUserSockets(to);
+      const targets = await getUserSockets(io, to);
       if (!targets || targets.length === 0) return;
       targets.forEach((socketId) => {
         io.to(socketId).emit("call-ended", { from: userId, callId });

@@ -1,12 +1,11 @@
-import redisClient from "../config/redis.js";
+const USER_ROOM_PREFIX = "user:";
 
-// Redis keys
-const ONLINE_USERS_KEY = "online_users"; // set of userIds
-const USER_SOCKETS_PREFIX = "user_sockets:"; // set of socketIds per user
+const getUserRoom = (userId) => `${USER_ROOM_PREFIX}${userId}`;
 
 const emitOnlineUsers = async (io) => {
   try {
-    const users = await redisClient.sMembers(ONLINE_USERS_KEY);
+    const sockets = await io.fetchSockets();
+    const users = [...new Set(sockets.map((socket) => socket.data.userId).filter(Boolean).map(String))];
     io.emit("onlineUsers", users);
   } catch (err) {
     console.error("Failed to emit online users", err);
@@ -21,57 +20,50 @@ export const setupPresenceHandlers = (io, socket) => {
     return;
   }
 
-  // Track user connection in Redis
+  socket.join(getUserRoom(authenticatedUserId));
+
   (async () => {
-    try {
-      await redisClient.sAdd(`${USER_SOCKETS_PREFIX}${authenticatedUserId}`, socket.id);
-      await redisClient.sAdd(ONLINE_USERS_KEY, authenticatedUserId);
-      await emitOnlineUsers(io);
-      console.log(`✅ User ${authenticatedUserId} connected (socket: ${socket.id})`);
-    } catch (err) {
-      console.error("Error tracking user connection in Redis", err);
-    }
-  })();
+    await emitOnlineUsers(io);
+    console.log(`✅ User ${authenticatedUserId} connected (socket: ${socket.id})`);
+  })().catch((err) => {
+    console.error("Error tracking user connection", err);
+  });
 
   // Handle disconnect
   socket.on("disconnect", () => {
     (async () => {
       try {
-        await redisClient.sRem(`${USER_SOCKETS_PREFIX}${authenticatedUserId}`, socket.id);
-
-        // If no more sockets for this user, remove from online set
-        const remaining = await redisClient.sCard(`${USER_SOCKETS_PREFIX}${authenticatedUserId}`);
-        if (remaining === 0) {
-          await redisClient.del(`${USER_SOCKETS_PREFIX}${authenticatedUserId}`);
-          await redisClient.sRem(ONLINE_USERS_KEY, authenticatedUserId);
-          console.log(`📵 User ${authenticatedUserId} is now offline`);
-        }
-
         await emitOnlineUsers(io);
+        console.log(`📵 User ${authenticatedUserId} is now offline`);
       } catch (err) {
-        console.error("Error handling disconnect in Redis", err);
+        console.error("Error handling disconnect", err);
       }
     })();
   });
 };
 
 // Export helper to get user's sockets
-export const getUserSockets = async (userId) => {
+export const getUserSockets = async (io, userId) => {
   try {
-    const sockets = await redisClient.sMembers(`${USER_SOCKETS_PREFIX}${userId}`);
-    return sockets;
+    if (!io || !userId) return [];
+
+    const sockets = await io.in(getUserRoom(userId)).fetchSockets();
+    return sockets.map((socket) => socket.id);
   } catch (err) {
-    console.error("Error getting user sockets from Redis", err);
+    console.error("Error getting user sockets", err);
     return null;
   }
 };
 
 // Export all online users
-export const getOnlineUsers = async () => {
+export const getOnlineUsers = async (io) => {
   try {
-    return await redisClient.sMembers(ONLINE_USERS_KEY);
+    if (!io) return [];
+
+    const sockets = await io.fetchSockets();
+    return [...new Set(sockets.map((socket) => socket.data.userId).filter(Boolean).map(String))];
   } catch (err) {
-    console.error("Error getting online users from Redis", err);
+    console.error("Error getting online users", err);
     return [];
   }
 };

@@ -8,7 +8,7 @@ export const setupChatHandlers = (io, socket) => {
   socket.on("typing", async ({ receiverId }) => {
     if (!senderId || !receiverId) return;
 
-    const receiverSockets = await getUserSockets(receiverId);
+    const receiverSockets = await getUserSockets(io, receiverId);
     if (!receiverSockets || receiverSockets.length === 0) return;
 
     receiverSockets.forEach((socketId) => {
@@ -20,7 +20,7 @@ export const setupChatHandlers = (io, socket) => {
   socket.on("stopTyping", async ({ receiverId }) => {
     if (!senderId || !receiverId) return;
 
-    const receiverSockets = await getUserSockets(receiverId);
+    const receiverSockets = await getUserSockets(io, receiverId);
     if (!receiverSockets || receiverSockets.length === 0) return;
 
     receiverSockets.forEach((socketId) => {
@@ -46,7 +46,7 @@ export const setupChatHandlers = (io, socket) => {
 
       console.log("✅ Message saved to DB:", newMessage._id);
 
-      const receiverSocketIds = await getUserSockets(receiverId);
+      const receiverSocketIds = await getUserSockets(io, receiverId);
 
       // Send to receiver
       if (receiverSocketIds && receiverSocketIds.length > 0) {
@@ -93,7 +93,7 @@ export const setupChatHandlers = (io, socket) => {
       );
 
       if (result.modifiedCount > 0 && unseenMessages.length > 0) {
-        const senderSockets = await getUserSockets(messageFromSenderId);
+        const senderSockets = await getUserSockets(io, messageFromSenderId);
         const seenMessageIds = unseenMessages.map((message) => message._id.toString());
 
         if (senderSockets && senderSockets.length > 0) {

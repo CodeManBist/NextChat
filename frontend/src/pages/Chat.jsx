@@ -202,10 +202,12 @@ const Chat = () => {
 
     if (!currentUserId) return;
 
-    // Listen for online users
-    socket.on("onlineUsers", (users) => {
+    const handleOnlineUsers = (users) => {
       setOnlineUsers(users);
-    });
+    };
+
+    // Listen for online users
+    socket.on("onlineUsers", handleOnlineUsers);
 
     // Listen for incoming messages
     socket.on("receiveMessage", (message) => {
@@ -290,7 +292,7 @@ const Chat = () => {
     });
 
     return () => {
-      socket.off("onlineUsers");
+      socket.off("onlineUsers", handleOnlineUsers);
       socket.off("receiveMessage");
       socket.off("messagesSeen");
       socket.off("typing");

@@ -5,13 +5,29 @@ const socket = io('http://localhost:5000', {
 	withCredentials: true,
 });
 
+let unloadCleanupRegistered = false;
+
+const disconnectSocket = () => {
+	if (socket.connected) {
+		socket.disconnect();
+	}
+};
+
+const registerUnloadCleanup = () => {
+	if (unloadCleanupRegistered) {
+		return;
+	}
+
+	unloadCleanupRegistered = true;
+	window.addEventListener('pagehide', disconnectSocket);
+	window.addEventListener('beforeunload', disconnectSocket);
+};
+
 export const syncSocketAuth = (token) => {
 	if (!token) {
 		socket.auth = {};
 
-		if (socket.connected) {
-			socket.disconnect();
-		}
+		disconnectSocket();
 
 		return;
 	}
@@ -23,11 +39,13 @@ export const syncSocketAuth = (token) => {
 
 	if (!socket.connected) {
 		socket.connect();
+		registerUnloadCleanup();
 		return;
 	}
 
 	if (currentToken !== token) {
 		socket.disconnect().connect();
+		registerUnloadCleanup();
 	}
 };
 
